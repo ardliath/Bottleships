@@ -78,6 +78,12 @@ namespace Bottleships
                     DrawShip(gfx, ship, xBuffer, yBuffer);
                 }
 
+
+                StringFormat format = new StringFormat();
+                format.LineAlignment = StringAlignment.Center;
+                format.Alignment = StringAlignment.Center;                
+                gfx.DrawString(fleet.Player.Name, new Font(FontFamily.GenericMonospace, 22), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, yBuffer), format);
+
             }
 
 
