@@ -9,6 +9,8 @@ namespace Bottleships.Logic
     public class Game
     {
         public IEnumerable<Fleet> Fleets { get; set; }
+
+        public IEnumerable<Shot> LastTurnShots { get; set; }
         
     }
 }

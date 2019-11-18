@@ -54,6 +54,17 @@ namespace Bottleships
             {
                 gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
 
+                if (Game.LastTurnShots != null)
+                {
+                    foreach (var lastTurnShot in this.Game.LastTurnShots)
+                    {
+                        if (fleet.Equals(lastTurnShot.Fleet))
+                        {
+                            gfx.FillRectangle(Brushes.DarkBlue, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
+                        }
+                    }
+                }
+
                 for (int i = 1; i < 10; i++)
                 {
                     gfx.DrawLine(Pens.Black, new Point(xBuffer, (i * 51) + yBuffer), new Point(this.pictureBox1.Width - xBuffer, (i * 51) + yBuffer));  // horizontal
@@ -120,6 +131,7 @@ namespace Bottleships
                     shots.AddRange(fleet.Player.GetShots(Game, fleet));
                 }
 
+                Game.LastTurnShots = shots;
                 foreach(var shot in shots)
                 {
                     shot.Fleet.ResolveShot(shot.Coordinates);
