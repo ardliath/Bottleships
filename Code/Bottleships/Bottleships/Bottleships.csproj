@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\RandomCaptain.cs" />
+    <Compile Include="Communication\ConnectedPlayer.cs" />
     <Compile Include="Communication\ICaptain.cs" />
     <Compile Include="Communication\ICommander.cs" />
     <Compile Include="Communication\LocalCommander.cs" />

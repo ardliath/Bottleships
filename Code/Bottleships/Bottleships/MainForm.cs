@@ -62,6 +62,7 @@ namespace Bottleships
 
             if(this.Server != null)
             {
+                DrawServerScreen();
                 return;
             }
 
@@ -87,6 +88,27 @@ namespace Bottleships
             UpdateScreen(bitmap);
         }
 
+        private void DrawServerScreen()
+        {
+            var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
+            using (Graphics gfx = Graphics.FromImage(bitmap))
+            {
+                gfx.DrawString("Bottleships Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 10));
+
+                var listenText = $"Server listening on http://{Environment.MachineName}:5999{"".PadRight(3 - Math.Abs(ScrollingXPos) % 3, '.')}";
+                gfx.DrawString(listenText, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 75));
+
+                gfx.DrawString("Connected Players:", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 110));
+                int i = 1;
+                foreach(var player in this.Server.ConnectedPlayers)
+                {
+                    gfx.DrawString(player.Name, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(15, 110 + (35 * i)));
+                    i++;
+                }
+            }            
+
+            UpdateScreen(bitmap);
+        }
 
         public void DrawGameScreen()
         {
@@ -172,7 +194,7 @@ namespace Bottleships
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if(Game != null)
-            {
+           {
                 Game.SinkShipsWhichCollideOrFallOutOfBounds();
                 if (e.KeyData == Keys.Left && FleetDisplayIndex > 0)
                 {
@@ -206,7 +228,7 @@ namespace Bottleships
                 return;
             }
             if(Server != null)
-            {
+            {                
                 return;
             }
             else // main menu
@@ -223,14 +245,19 @@ namespace Bottleships
                 {
                     switch(SelectedMenuIndex)
                     {
-                        case 0:
+                        case 0: // play locally
+                            this.Server = null;
                             Game = CreateLocalGame();
                             this.Timer.Interval = 5000;
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
-                        case 1:
+                        case 1: // connect to server
                             break;
-                        case 2:
+                        case 2: // host server
+                            this.Game = null;
+                            this.Server = new Server();
+                            this.Timer.Interval = 500;
+                            this.DrawServerScreen();
                             break;
                         default:
                             this.Close();
