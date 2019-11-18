@@ -194,13 +194,13 @@ namespace Bottleships
                            new Ship
                            {
                                Class = Clazz.Battleship,
-                               Coordinates = new Coordinates{ X = 1, Y = 5 },
+                               Coordinates = new Coordinates{ X = 1, Y = 7 },
                                Direction = Direction.Left
                            },
                            new Ship
                            {
                                Class = Clazz.Gunboat,
-                               Coordinates = new Coordinates{ X = 4, Y = 8 },
+                               Coordinates = new Coordinates{ X = 7, Y = 8 },
                                Direction = Direction.Down
                            },
                            new Ship
