@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bottleships.Logic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -37,7 +38,7 @@ namespace Bottleships
         }
 
 
-        public void DrawGameScreen()
+        public void DrawGameScreen(Fleet fleet)
         {            
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
 
@@ -55,13 +56,25 @@ namespace Bottleships
                     gfx.DrawLine(Pens.Black, new Point((i * 26) + xBuffer, yBuffer), new Point((i * 26) + xBuffer, this.pictureBox1.Height - yBuffer));
                 }
 
+                foreach (var ship in fleet.Ships)
+                {
+                    DrawShip(gfx, ship, xBuffer, yBuffer);
+                }
+
             }
 
 
             this.UpdateScreen(bitmap);
         }
 
-
+        private void DrawShip(Graphics gfx, Ship ship, int xBuffer, int yBuffer)
+        {
+            var shipSquares = ship.GetSquares();
+            foreach(var coords in shipSquares)
+            {
+                gfx.FillRectangle(Brushes.Gray, new Rectangle(xBuffer + (coords.X * 26), yBuffer + (coords.Y * 26), 25, 25));
+            }
+        }
 
         public delegate void UpdateScreenDelegate(Bitmap bitmap);
 
@@ -74,13 +87,47 @@ namespace Bottleships
             else
             {                
                 this.pictureBox1.Image = bitmap;
-
             }
         }
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            DrawGameScreen();
+            var fleet = new Fleet
+            {
+                Player = new Player
+                {
+                    Name = "Adam"
+                },
+                Ships = new Ship[]
+               {
+                   new Ship
+                   {
+                       Class = Clazz.Battleship,
+                       Coordinates = new Coordinates{ X = 3, Y = 4 },
+                       Direction = Direction.Right
+                   },
+                   new Ship
+                   {
+                       Class = Clazz.Gunboat,
+                       Coordinates = new Coordinates{ X = 7, Y = 3 },
+                       Direction = Direction.Up
+                   },
+                   new Ship
+                   {
+                       Class = Clazz.Submarine,
+                       Coordinates = new Coordinates{ X = 5, Y = 1 },
+                       Direction = Direction.Up
+                   },
+                   new Ship
+                   {
+                       Class = Clazz.Frigate,
+                       Coordinates = new Coordinates{ X = 1, Y = 8 },
+                       Direction = Direction.Left
+                   }
+               }
+            };
+
+            DrawGameScreen(fleet);
         }
     }
 }
