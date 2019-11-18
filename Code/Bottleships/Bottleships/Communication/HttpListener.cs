@@ -12,210 +12,93 @@ namespace Bottleships.Communication
 {
     public class HttpListenerClass
     {
-        private readonly string[] _indexFiles =
-        {
-            "index.html",
-            "index.htm",
-            "default.html",
-            "default.htm"
-        };
+        private readonly HttpListener _listener;
+        private readonly Thread _listenerThread;
+        private readonly Thread[] _workers;
+        private readonly ManualResetEvent _stop, _ready;
+        private Queue<HttpListenerContext> _queue;
 
-        private IDictionary<string, string> _mimeTypeMappings =
-            new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+        public HttpListenerClass(int maxThreads)
+        {
+            _workers = new Thread[maxThreads];
+            _queue = new Queue<HttpListenerContext>();
+            _stop = new ManualResetEvent(false);
+            _ready = new ManualResetEvent(false);
+            _listener = new HttpListener();
+            _listenerThread = new Thread(HandleRequests);
+        }
+
+        public void Start(int port)
+        {
+            _listener.Prefixes.Add(String.Format(@"http://+:{0}/", port));
+            _listener.Start();
+            _listenerThread.Start();
+
+            for (int i = 0; i < _workers.Length; i++)
             {
-                #region extension to MIME type list
-                {".asf", "video/x-ms-asf"},
-                {".asx", "video/x-ms-asf"},
-                {".avi", "video/x-msvideo"},
-                {".bin", "application/octet-stream"},
-                {".cco", "application/x-cocoa"},
-                {".crt", "application/x-x509-ca-cert"},
-                {".css", "text/css"},
-                {".deb", "application/octet-stream"},
-                {".der", "application/x-x509-ca-cert"},
-                {".dll", "application/octet-stream"},
-                {".dmg", "application/octet-stream"},
-                {".ear", "application/java-archive"},
-                {".eot", "application/octet-stream"},
-                {".exe", "application/octet-stream"},
-                {".flv", "video/x-flv"},
-                {".gif", "image/gif"},
-                {".hqx", "application/mac-binhex40"},
-                {".htc", "text/x-component"},
-                {".htm", "text/html"},
-                {".html", "text/html"},
-                {".ico", "image/x-icon"},
-                {".img", "application/octet-stream"},
-                {".iso", "application/octet-stream"},
-                {".jar", "application/java-archive"},
-                {".jardiff", "application/x-java-archive-diff"},
-                {".jng", "image/x-jng"},
-                {".jnlp", "application/x-java-jnlp-file"},
-                {".jpeg", "image/jpeg"},
-                {".jpg", "image/jpeg"},
-                {".js", "application/x-javascript"},
-                {".mml", "text/mathml"},
-                {".mng", "video/x-mng"},
-                {".mov", "video/quicktime"},
-                {".mp3", "audio/mpeg"},
-                {".mpeg", "video/mpeg"},
-                {".mpg", "video/mpeg"},
-                {".msi", "application/octet-stream"},
-                {".msm", "application/octet-stream"},
-                {".msp", "application/octet-stream"},
-                {".pdb", "application/x-pilot"},
-                {".pdf", "application/pdf"},
-                {".pem", "application/x-x509-ca-cert"},
-                {".pl", "application/x-perl"},
-                {".pm", "application/x-perl"},
-                {".png", "image/png"},
-                {".prc", "application/x-pilot"},
-                {".ra", "audio/x-realaudio"},
-                {".rar", "application/x-rar-compressed"},
-                {".rpm", "application/x-redhat-package-manager"},
-                {".rss", "text/xml"},
-                {".run", "application/x-makeself"},
-                {".sea", "application/x-sea"},
-                {".shtml", "text/html"},
-                {".sit", "application/x-stuffit"},
-                {".swf", "application/x-shockwave-flash"},
-                {".tcl", "application/x-tcl"},
-                {".tk", "application/x-tcl"},
-                {".txt", "text/plain"},
-                {".war", "application/java-archive"},
-                {".wbmp", "image/vnd.wap.wbmp"},
-                {".wmv", "video/x-ms-wmv"},
-                {".xml", "text/xml"},
-                {".xpi", "application/x-xpinstall"},
-                {".zip", "application/zip"},
-
-                #endregion
-            };
-
-        private Thread _serverThread;
-        private HttpListener _listener;
-        private int _port;
-
-        public int Port
-        {
-            get { return _port; }
-            private set { }
+                _workers[i] = new Thread(Worker);
+                _workers[i].Start();
+            }
         }
 
-        /// <summary>
-        /// Construct server with given port.
-        /// </summary>
-        /// <param name="port">Port of the server.</param>
-        public HttpListenerClass(int port)
-        {
-            _port = port;
-        }
+        public void Dispose()
+        { Stop(); }
 
-
-        /// <summary>
-        /// Stop server and dispose all functions.
-        /// </summary>
         public void Stop()
         {
-            _serverThread.Abort();
+            _stop.Set();
+            _listenerThread.Join();
+            foreach (Thread worker in _workers)
+                worker.Join();
             _listener.Stop();
         }
 
-        private void Listen()
+        private void HandleRequests()
         {
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
-            _listener.Start();
-            while (true)
+            while (_listener.IsListening)
             {
-                HttpListenerContext context = _listener.GetContext();
-                ProcessIncomingMessage(context);
+                var context = _listener.BeginGetContext(ContextReady, null);
+
+                if (0 == WaitHandle.WaitAny(new[] { _stop, context.AsyncWaitHandle }))
+                    return;
             }
         }
 
-        private void ProcessIncomingMessage(HttpListenerContext context)
+        private void ContextReady(IAsyncResult ar)
         {
-            string body = null;
-            StreamReader sr = new StreamReader(context.Request.InputStream);
-            using (sr)
+            try
             {
-                body = sr.ReadToEnd();
+                lock (_queue)
+                {
+                    _queue.Enqueue(_listener.EndGetContext(ar));
+                    _ready.Set();
+                }
             }
+            catch { return; }
+        }
 
-            var method = context.Request.Url.AbsolutePath.Replace("/", "").ToLower();
-            switch (method)
+        private void Worker()
+        {
+            WaitHandle[] wait = new[] { _ready, _stop };
+            while (0 == WaitHandle.WaitAny(wait))
             {
-                //case "startgame":
-                //    var data = JsonConvert.DeserializeObject<StartGame>(body);
+                HttpListenerContext context;
+                lock (_queue)
+                {
+                    if (_queue.Count > 0)
+                        context = _queue.Dequeue();
+                    else
+                    {
+                        _ready.Reset();
+                        continue;
+                    }
+                }
 
-                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
-                //    context.Response.ContentType = "text/plain";
-                //    using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
-                //    {
-                //        sw.WriteLine(context.Request.RawUrl);
-                //    }
-
-                //    _bot.StartGame(data);
-
-                //    break;
-
-                //case "endgame":
-                //    var endGameData = JsonConvert.DeserializeObject<EndGame>(body);
-
-                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
-                //    context.Response.ContentType = "text/plain";
-                //    using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
-                //    {
-                //        sw.WriteLine(context.Request.RawUrl);
-                //    }
-
-                //    _bot.EndGame(endGameData);
-
-                //    break;
-
-                //case "endround":
-                //    var endRoundData = JsonConvert.DeserializeObject<EndRound>(body);
-
-                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
-                //    context.Response.ContentType = "text/plain";
-                //    using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
-                //    {
-                //        sw.WriteLine(context.Request.RawUrl);
-                //    }
-
-                //    _bot.EndRound(endRoundData);
-
-                //    break;
-
-                //case "getmove":
-                //    var getMoveData = JsonConvert.DeserializeObject<GetMove>(body);
-
-                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
-                //    context.Response.ContentType = "text/plain";
-                //    using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
-                //    {
-                //        var responseData = new GetMoveResponse
-                //        {
-                //            Direction = _bot.GetMove(getMoveData)
-                //        };
-                //        sw.WriteLine(JsonConvert.SerializeObject(responseData));
-                //    }
-
-                //    break;
-
-                default:
-                    break;
+                try { ProcessRequest(context); }
+                catch (Exception e) { Console.Error.WriteLine(e); }
             }
         }
 
-
-        public void Initialize()
-        {
-            _serverThread = new Thread(this.Listen);
-            _serverThread.Name = "Listen Thread";
-            _serverThread.Start();
-            Console.WriteLine(string.Format("Bot initialised on port {0}.", _port));
-        }
-
+        public event Action<HttpListenerContext> ProcessRequest;
     }
 }

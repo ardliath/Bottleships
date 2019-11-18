@@ -105,6 +105,8 @@ namespace Bottleships
             }            
 
             UpdateScreen(bitmap);
+
+            this.Server.ListenForPlayers();
         }
 
         public void DrawGameScreen()
