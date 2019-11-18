@@ -18,5 +18,10 @@ namespace Bottleships.Communication
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

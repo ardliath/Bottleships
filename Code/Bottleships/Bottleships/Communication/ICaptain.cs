@@ -11,5 +11,6 @@ namespace Bottleships.Communication
     {
         string GetName();
         IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes);
+        IEnumerable<Shot> GetShots(Game game, Fleet myFleet);
     }
 }
