@@ -46,6 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\RandomCaptain.cs" />
+    <Compile Include="Communication\ICaptain.cs" />
+    <Compile Include="Communication\ICommander.cs" />
+    <Compile Include="Communication\LocalCommander.cs" />
+    <Compile Include="Communication\RemoteCommander.cs" />
     <Compile Include="Logic\Clazz.cs" />
     <Compile Include="Logic\Coordinates.cs" />
     <Compile Include="Logic\Direction.cs" />
@@ -61,6 +66,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MyCaptain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">

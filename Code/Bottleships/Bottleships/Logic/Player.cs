@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bottleships.Communication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,15 @@ namespace Bottleships.Logic
 {
     public class Player
     {
-        public string Name { get; set; }
+        public string Name { get; private set; }
+
+        public ICommander Commander { get; private set; }
+
+        public Player(ICommander commander)
+        {
+            this.Commander = commander;
+            this.Name = this.Commander.GetName();
+        }
 
         public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
         {

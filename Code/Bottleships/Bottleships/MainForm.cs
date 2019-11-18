@@ -1,4 +1,6 @@
-﻿using Bottleships.Logic;
+﻿using Bottleships.AI;
+using Bottleships.Communication;
+using Bottleships.Logic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,8 +148,8 @@ namespace Bottleships
 
         private Game CreateGame()
         {
-            var adam = new Player { Name = "Adam" };
-            var joe = new Player { Name = "Joe" };
+            var adam = new Player(new LocalCommander(new MyCaptain()));
+            var joe = new Player(new LocalCommander(new RandomCaptain()));
 
             var classes = new Clazz[]
             {
