@@ -46,6 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logic\Clazz.cs" />
+    <Compile Include="Logic\Coordinates.cs" />
+    <Compile Include="Logic\Direction.cs" />
+    <Compile Include="Logic\Fleet.cs" />
+    <Compile Include="Logic\Game.cs" />
+    <Compile Include="Logic\Player.cs" />
+    <Compile Include="Logic\Ship.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
