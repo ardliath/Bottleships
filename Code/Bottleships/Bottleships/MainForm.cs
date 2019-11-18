@@ -71,7 +71,7 @@ namespace Bottleships
                     gfx.DrawLine(Pens.Black, new Point((i * 51) + xBuffer, yBuffer), new Point((i * 51) + xBuffer, this.pictureBox1.Height - yBuffer)); // vertical
                 }
 
-                foreach (var ship in fleet.Ships)
+                foreach (var ship in fleet.Ships.Where(s => s.IsAfloat))
                 {
                     DrawShip(gfx, ship, xBuffer, yBuffer);
                 }

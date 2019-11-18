@@ -95,6 +95,8 @@ namespace Bottleships.Logic
                     this.DamageIndicies.Add(shipPosition.PositionIndex);
                 }
             }
+
+            IsAfloat = this.Class.Size > this.DamageIndicies.Count();
         }
     }
 }
