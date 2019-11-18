@@ -18,8 +18,8 @@ namespace Bottleships.Logic
             {
                 var coords = new Coordinates
                 {
-                    X = rand.Next(0, 10),
-                    Y = rand.Next(0, 10)
+                    X = rand.Next(0, 9),
+                    Y = rand.Next(0, 9)
                 };
 
                 shots.Add(new Shot
