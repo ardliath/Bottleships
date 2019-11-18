@@ -12,16 +12,19 @@ namespace Bottleships.Logic
         public Direction Direction { get; set; }
         public Clazz Class { get; set; }
 
+        public List<int> DamageIndicies { get; set; }
+
         public bool IsAfloat { get; set; }
 
         public Ship()
         {
             this.IsAfloat = true;
+            this.DamageIndicies = new List<int>();
         }
 
-        public IEnumerable<Coordinates> GetSquares()
+        public IEnumerable<Square> GetSquares()
         {
-            var coords = new List<Coordinates>();
+            var coords = new List<Square>();
             
             var isOdd = this.Class.Size % 2 == 1;
             var halfRoundedDown = (this.Class.Size - (isOdd ? 1 : 0)) / 2;
@@ -60,15 +63,38 @@ namespace Bottleships.Logic
 
             for(int i = 0; i < this.Class.Size; i++)
             {
-                coords.Add(new Coordinates
+                var square = new Square
                 {
                     X = backOfBoat.X + (xOffset * i),
-                    Y = backOfBoat.Y + (yOffset * i)
-                });
-            }
+                    Y = backOfBoat.Y + (yOffset * i),
+                    PositionIndex = i
+                };                
+                coords.Add(square);
+
+                if(square.Equals(this.Coordinates))
+                {
+                    square.IsCentre = true;
+                }
+                if(DamageIndicies.Contains(i))
+                {
+                    square.IsDamaged = true;
+                }
+            }            
             
 
             return coords;
+        }
+
+        public void RegisterDamage(Coordinates coordinates)
+        {
+            var position = this.GetSquares();
+            foreach(var shipPosition in position)
+            {
+                if(shipPosition.Equals(coordinates) && !shipPosition.IsDamaged)
+                {
+                    this.DamageIndicies.Add(shipPosition.PositionIndex);
+                }
+            }
         }
     }
 }
