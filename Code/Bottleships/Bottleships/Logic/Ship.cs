@@ -14,54 +14,52 @@ namespace Bottleships.Logic
 
         public IEnumerable<Coordinates> GetSquares()
         {
-            var isOdd = Class.Size % 2 == 1;
-            var isVertical = Direction == Direction.Down || Direction == Direction.Up;
-
             var coords = new List<Coordinates>();
-            var currentLenth = 1;
-            coords.Add(this.Coordinates);
+            
+            var isOdd = this.Class.Size % 2 == 1;
+            var halfRoundedDown = (this.Class.Size - (isOdd ? 1 : 0)) / 2;
 
-            if (!isOdd)
+            var backOfBoatOffset = halfRoundedDown;
+            var frontOfBoatOffset = halfRoundedDown + (isOdd ? 0 : -1);
+
+            int xOffset = 0;
+            int yOffset = 0;
+            Coordinates backOfBoat;
+
+            switch(Direction)
             {
-                currentLenth++;
-                switch (Direction)
-                {
-                    case Direction.Up:
-                        coords.Add(new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y - 1});
-                        break;
+                case Direction.Up:
+                    yOffset = -1;
+                    backOfBoat = new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y + backOfBoatOffset };
+                    break;
 
-                    case Direction.Down:
-                        coords.Add(new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y + 1});
-                        break;
+                case Direction.Down:
+                    yOffset = 1;
+                    backOfBoat = new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y - backOfBoatOffset };
+                    break;
+                case Direction.Left:
+                    backOfBoat = new Coordinates { X = this.Coordinates.X + backOfBoatOffset, Y = this.Coordinates.Y};
+                    xOffset = -1;
+                    break;
+                case Direction.Right:
+                    backOfBoat = new Coordinates { X = this.Coordinates.X - backOfBoatOffset, Y = this.Coordinates.Y};
+                    xOffset = 1;
+                    break;
 
-                    case Direction.Left:
-                        coords.Add(new Coordinates { X = this.Coordinates.X - 1, Y = this.Coordinates.Y });
-                        break;
-
-                    case Direction.Right:
-                        coords.Add(new Coordinates { X = this.Coordinates.X + 1, Y = this.Coordinates.Y });
-                        break;
-                }
+                default:
+                    backOfBoat = new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y };
+                    break;
             }
 
-            int i = 0;
-            while (currentLenth <= Class.Size)
+            for(int i = 0; i < this.Class.Size; i++)
             {
-                if (isVertical)
+                coords.Add(new Coordinates
                 {
-                    coords.Add(new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y + i });
-                    coords.Add(new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y - i });
-                }
-                else
-                {
-                    coords.Add(new Coordinates { X = this.Coordinates.X + i, Y = this.Coordinates.Y });
-                    coords.Add(new Coordinates { X = this.Coordinates.X - i, Y = this.Coordinates.Y - i });
-                }
-
-                i++;
-                currentLenth += 2;
+                    X = backOfBoat.X + (xOffset * i),
+                    Y = backOfBoat.Y + (yOffset * i)
+                });
             }
-
+            
 
             return coords;
         }
