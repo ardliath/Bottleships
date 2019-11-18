@@ -42,14 +42,18 @@ namespace Bottleships.Communication
         }
 
         public void Dispose()
-        { Stop(); }
+        {
+            Stop();
+        }
 
         public void Stop()
         {
             _stop.Set();
             _listenerThread.Join();
             foreach (Thread worker in _workers)
+            {
                 worker.Join();
+            }
             _listener.Stop();
         }
 

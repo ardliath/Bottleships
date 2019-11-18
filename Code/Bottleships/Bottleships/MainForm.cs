@@ -95,7 +95,7 @@ namespace Bottleships
             {
                 gfx.DrawString("Bottleships Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 10));
 
-                var listenText = $"Server listening on http://{Environment.MachineName}:5999{"".PadRight(3 - Math.Abs(ScrollingXPos) % 3, '.')}";
+                var listenText = $"Server listening on http://{Environment.MachineName}:5999{"".PadRight(3 - Math.Abs(ScrollingXPos / 10) % 3, '.')}";
                 gfx.DrawString(listenText, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 75));
 
                 gfx.DrawString("Connected Players:", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 110));
@@ -105,6 +105,10 @@ namespace Bottleships
                     gfx.DrawString(player.Name, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(15, 110 + (35 * i)));
                     i++;
                 }
+
+
+                gfx.DrawString("Start Game", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, this.pictureBox1.Height - 75));
+                gfx.DrawString("Close Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, this.pictureBox1.Height - 45));
             }            
 
             UpdateScreen(bitmap);
@@ -230,8 +234,29 @@ namespace Bottleships
                 return;
             }
             if(Server != null)
-            {                
-                return;
+            {
+                if (e.KeyData == Keys.Up && SelectedMenuIndex > 0)
+                {
+                    SelectedMenuIndex--;
+                }
+                if (e.KeyData == Keys.Down && SelectedMenuIndex < 1)
+                {
+                    SelectedMenuIndex++;
+                }
+                if (e.KeyData == Keys.Enter)
+                {
+                    switch (SelectedMenuIndex)
+                    {
+                        case 0: // start a remote game
+                            break;
+                        case 1: // abort
+                            this.Server.StopListening();
+                            this.Server = null;
+                            this.SelectedMenuIndex = 0;
+                            this.DrawMenu();
+                            break;
+                    }
+                }
             }
             else // main menu
             {
@@ -264,7 +289,8 @@ namespace Bottleships
                         case 2: // host server
                             this.Game = null;
                             this.Server = new Server();
-                            this.Timer.Interval = 500;
+                            this.SelectedMenuIndex = 0;
+                            this.Timer.Interval = 25;
                             this.DrawServerScreen();
                             break;
                         default:

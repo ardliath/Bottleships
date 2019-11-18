@@ -72,7 +72,7 @@ namespace Bottleships.Communication
 
         public void StopListening()
         {
-            if(_listener == null)
+            if(_listener != null)
             {
                 _listener.Stop();
                 _listener.Dispose();
