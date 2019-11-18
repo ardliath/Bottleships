@@ -199,8 +199,8 @@ namespace Bottleships
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if(Game != null)
-           {
+            if (Game != null)
+            {
                 Game.SinkShipsWhichCollideOrFallOutOfBounds();
                 if (e.KeyData == Keys.Left && FleetDisplayIndex > 0)
                 {
@@ -233,7 +233,7 @@ namespace Bottleships
 
                 return;
             }
-            if(Server != null)
+            if (Server != null)
             {
                 if (e.KeyData == Keys.Up && SelectedMenuIndex > 0)
                 {
@@ -248,6 +248,28 @@ namespace Bottleships
                     switch (SelectedMenuIndex)
                     {
                         case 0: // start a remote game
+                            var player1 = new Player(new RemoteCommander(this.Server.ConnectedPlayers.FirstOrDefault()));
+                            var player2 = new Player(new LocalCommander(new RandomCaptain()));
+
+                            var classes = new Clazz[]
+                            {
+                                Clazz.AircraftCarrier,
+                                Clazz.Battleship,
+                                Clazz.Frigate,
+                                Clazz.Gunboat,
+                                Clazz.Submarine
+                            };
+                            var fleet1 = player1.GetFleet(classes);
+                            var fleet2 = player2.GetFleet(classes);
+
+                            var game = new Game
+                            {
+                                Fleets = new Fleet[]
+                                {
+                                    fleet1,
+                                    fleet2
+                                }
+                            };
                             break;
                         case 1: // abort
                             this.Server.StopListening();
@@ -268,9 +290,9 @@ namespace Bottleships
                 {
                     SelectedMenuIndex++;
                 }
-                if(e.KeyData == Keys.Enter)
+                if (e.KeyData == Keys.Enter)
                 {
-                    switch(SelectedMenuIndex)
+                    switch (SelectedMenuIndex)
                     {
                         case 0: // play locally
                             this.Server = null;
@@ -279,7 +301,7 @@ namespace Bottleships
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
                         case 1: // connect to server
-                            SendMessage("registerplayer", new ConnectedPlayer
+                            new HttpTransmitter().SendMessage("http://localhost:5999", "registerplayer", new ConnectedPlayer
                             {
                                 Name = "Adam Test",
                                 SecretCode = "123",
@@ -298,7 +320,7 @@ namespace Bottleships
                             break;
                     }
                 }
-            }            
+            }
         }
 
         private Game CreateLocalGame()
@@ -327,30 +349,6 @@ namespace Bottleships
             };
 
             return game;
-        }
-
-
-        private string SendMessage(string message, object data)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(string.Format("{0}/{1}", "http://localhost:5999", message));
-
-            var postData = JsonConvert.SerializeObject(data);
-            var byteData = Encoding.ASCII.GetBytes(postData);
-
-            request.Method = "POST";
-            request.Timeout = 30000;
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = byteData.Length;
-
-            using (var stream = request.GetRequestStream())
-            {
-                stream.Write(byteData, 0, byteData.Length);
-            }
-
-            var response = (HttpWebResponse)request.GetResponse();
-
-            var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-            return responseString;
         }
     }
 }

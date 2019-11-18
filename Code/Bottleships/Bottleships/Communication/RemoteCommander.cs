@@ -9,9 +9,15 @@ namespace Bottleships.Communication
 {
     public class RemoteCommander : ICommander
     {
+        private ConnectedPlayer _connectedPlayer;
+        public RemoteCommander(ConnectedPlayer connectedPlayer)
+        {
+            _connectedPlayer = connectedPlayer;
+        }
+
         public string GetName()
         {
-            throw new NotImplementedException();
+            return _connectedPlayer.Name;
         }
 
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
