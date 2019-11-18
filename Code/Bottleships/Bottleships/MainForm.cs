@@ -301,11 +301,12 @@ namespace Bottleships
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
                         case 1: // connect to server
-                            new HttpTransmitter().SendMessage("http://localhost:5999", "registerplayer", new ConnectedPlayer
+                            var bot = new MyCaptain();  // this would probably be better as a property of the form so state is maintained
+                            new HttpTransmitter().SendMessage("http://localhost:5999", "registerplayer", new ConnectedPlayer // the server name should be editable
                             {
-                                Name = "Adam Test",
-                                SecretCode = "123",
-                                Url = "http://localhost:5999"
+                                Name = bot.GetName(),
+                                SecretCode = bot.GetSecretCode(),
+                                Url = "http://localhost:5999" // this should be constructed from the PC name
                             });
                             break;
                         case 2: // host server
