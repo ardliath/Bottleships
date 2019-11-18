@@ -41,8 +41,8 @@ namespace Bottleships
         public void DrawGameScreen(Fleet fleet)
         {            
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
-
-            var gameSize = (25 * 10) + 8;
+            
+            var gameSize = (50 * 10) + 8;
             var xBuffer = (this.pictureBox1.Width - gameSize) / 2;
             var yBuffer = (this.pictureBox1.Height - gameSize) / 2;
 
@@ -52,8 +52,8 @@ namespace Bottleships
 
                 for (int i = 1; i < 10; i++)
                 {
-                    gfx.DrawLine(Pens.Black, new Point(xBuffer, (i * 26) + yBuffer), new Point(this.pictureBox1.Width - xBuffer, (i * 26) + yBuffer));
-                    gfx.DrawLine(Pens.Black, new Point((i * 26) + xBuffer, yBuffer), new Point((i * 26) + xBuffer, this.pictureBox1.Height - yBuffer));
+                    gfx.DrawLine(Pens.Black, new Point(xBuffer, (i * 51) + yBuffer), new Point(this.pictureBox1.Width - xBuffer, (i * 51) + yBuffer));  // horizontal
+                    gfx.DrawLine(Pens.Black, new Point((i * 51) + xBuffer, yBuffer), new Point((i * 51) + xBuffer, this.pictureBox1.Height - yBuffer)); // vertical
                 }
 
                 foreach (var ship in fleet.Ships)
@@ -70,10 +70,11 @@ namespace Bottleships
         private void DrawShip(Graphics gfx, Ship ship, int xBuffer, int yBuffer)
         {
             var shipSquares = ship.GetSquares();
-            foreach(var coords in shipSquares)
+            foreach (var coords in shipSquares)
             {
-                gfx.FillRectangle(Brushes.Gray, new Rectangle( 1+ xBuffer + (coords.X * 26), 1 + yBuffer + (coords.Y * 26), 25, 25));
+                gfx.FillRectangle(Brushes.Gray, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
             }
+            gfx.FillRectangle(Brushes.Black, new Rectangle(1 + xBuffer + (ship.Coordinates.X * 51), 1 + yBuffer + (ship.Coordinates.Y * 51), 50, 50));
         }
 
         public delegate void UpdateScreenDelegate(Bitmap bitmap);
