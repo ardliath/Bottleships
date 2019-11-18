@@ -12,7 +12,7 @@ namespace Bottleships.Logic
         {
             var rand = new Random();
             var shots = new List<Shot>();
-            var target = game.Fleets.Where(f => f.Equals(myFleet)).FirstOrDefault();
+            var target = game.Fleets.Where(f => !f.Equals(myFleet)).FirstOrDefault();
 
             for (int i = 0; i < myFleet.Ships.Count(s => s.IsAfloat); i++)
             {
