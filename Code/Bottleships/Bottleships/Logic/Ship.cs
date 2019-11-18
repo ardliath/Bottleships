@@ -87,16 +87,19 @@ namespace Bottleships.Logic
 
         public void RegisterDamage(Coordinates coordinates)
         {
-            var position = this.GetSquares();
-            foreach(var shipPosition in position)
+            if (this.IsAfloat)
             {
-                if(shipPosition.Equals(coordinates) && !shipPosition.IsDamaged)
+                var position = this.GetSquares();
+                foreach (var shipPosition in position)
                 {
-                    this.DamageIndicies.Add(shipPosition.PositionIndex);
+                    if (shipPosition.Equals(coordinates) && !shipPosition.IsDamaged)
+                    {
+                        this.DamageIndicies.Add(shipPosition.PositionIndex);
+                    }
                 }
-            }
 
-            IsAfloat = this.Class.Size > this.DamageIndicies.Count();
+                IsAfloat = this.Class.Size > this.DamageIndicies.Count();
+            }
         }
     }
 }
