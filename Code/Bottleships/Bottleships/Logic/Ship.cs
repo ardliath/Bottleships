@@ -12,6 +12,13 @@ namespace Bottleships.Logic
         public Direction Direction { get; set; }
         public Clazz Class { get; set; }
 
+        public bool IsAfloat { get; set; }
+
+        public Ship()
+        {
+            this.IsAfloat = true;
+        }
+
         public IEnumerable<Coordinates> GetSquares()
         {
             var coords = new List<Coordinates>();
