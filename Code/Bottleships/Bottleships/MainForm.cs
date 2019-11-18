@@ -224,7 +224,7 @@ namespace Bottleships
                     switch(SelectedMenuIndex)
                     {
                         case 0:
-                            Game = CreateGame();
+                            Game = CreateLocalGame();
                             this.Timer.Interval = 5000;
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
@@ -240,10 +240,10 @@ namespace Bottleships
             }            
         }
 
-        private Game CreateGame()
+        private Game CreateLocalGame()
         {
-            var adam = new Player(new LocalCommander(new MyCaptain()));
-            var joe = new Player(new LocalCommander(new RandomCaptain()));
+            var player1 = new Player(new LocalCommander(new MyCaptain()));
+            var player2 = new Player(new LocalCommander(new RandomCaptain()));
 
             var classes = new Clazz[]
             {
@@ -253,8 +253,8 @@ namespace Bottleships
                 Clazz.Gunboat,
                 Clazz.Submarine
             };
-            var fleet1 = adam.GetFleet(classes);
-            var fleet2 = joe.GetFleet(classes);
+            var fleet1 = player1.GetFleet(classes);
+            var fleet2 = player2.GetFleet(classes);
 
             var game = new Game
             {
