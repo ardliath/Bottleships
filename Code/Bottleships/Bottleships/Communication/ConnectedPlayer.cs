@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Bottleships.Communication
 {
@@ -8,9 +9,5 @@ namespace Bottleships.Communication
         public string Url { get; set; }
 
         public string SecretCode { get; set; }
-
-        public DateTime FirstConnected { get; set; }
-
-        public DateTime LastConnected { get; set; }
     }
 }
