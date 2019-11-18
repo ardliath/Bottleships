@@ -80,9 +80,6 @@ namespace Bottleships
                 gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 110));
                 gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 145));
                 gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 180));
-
-                //var playerNames = $"0 Players Online";
-                //gfx.DrawString(playerNames, new Font(FontFamily.GenericMonospace, 12), Brushes.Black, ScrollingXPos, this.pictureBox1.Height - 30);
             }
 
             UpdateScreen(bitmap);
@@ -294,6 +291,5 @@ namespace Bottleships
 
             return game;
         }
-
     }
 }
