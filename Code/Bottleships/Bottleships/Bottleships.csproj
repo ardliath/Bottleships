@@ -57,6 +57,7 @@
     <Compile Include="Logic\Direction.cs" />
     <Compile Include="Logic\Fleet.cs" />
     <Compile Include="Logic\Game.cs" />
+    <Compile Include="Logic\Placement.cs" />
     <Compile Include="Logic\Player.cs" />
     <Compile Include="Logic\Ship.cs" />
     <Compile Include="Logic\Shot.cs" />

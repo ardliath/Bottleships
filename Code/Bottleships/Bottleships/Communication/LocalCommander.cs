@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bottleships.Logic;
 
 namespace Bottleships.Communication
 {
@@ -18,6 +19,11 @@ namespace Bottleships.Communication
         public string GetName()
         {
             return Captain.GetName();
+        }
+
+        public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
+        {
+            return Captain.GetPlacements(classes);
         }
     }
 }

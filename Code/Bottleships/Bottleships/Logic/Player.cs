@@ -49,22 +49,17 @@ namespace Bottleships.Logic
                 Player = this
             };
 
-            var rand = new Random(Guid.NewGuid().GetHashCode());
-            foreach(var clazz in classes.OrderByDescending(s => s.Size))
-            {
-                var ship = new Ship
-                {
-                    Class = clazz,
-                    Direction = (Direction)(1 + rand.Next(3)),
-                    Coordinates = new Coordinates
-                    {
-                        X = rand.Next(9),
-                        Y = rand.Next(9)
-                    }
-                };
-                ships.Add(ship);
-            }
+            var positions = Commander.GetPlacements(classes);
 
+            foreach(var position in positions)
+            {
+                ships.Add(new Ship
+                {
+                    Class = position.Class,
+                    Direction = position.Direction,
+                    Coordinates = position.Coordinates
+                });
+            }                          
 
             fleet.Ships = ships;
             return fleet;
