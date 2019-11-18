@@ -51,6 +51,7 @@
     <Compile Include="Communication\ICommander.cs" />
     <Compile Include="Communication\LocalCommander.cs" />
     <Compile Include="Communication\RemoteCommander.cs" />
+    <Compile Include="Communication\Server.cs" />
     <Compile Include="Logic\Clazz.cs" />
     <Compile Include="Logic\Coordinates.cs" />
     <Compile Include="Logic\Direction.cs" />

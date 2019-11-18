@@ -18,6 +18,14 @@ namespace Bottleships
         public int FleetDisplayIndex;
         public Game Game { get; set; }
 
+        public Server Server { get; set; }
+
+        public Timer Timer { get; set; }
+
+        public int ScrollingXPos = 0;
+
+        public int SelectedMenuIndex = 0;
+
         public MainForm()
         {
             InitializeComponent();
@@ -26,9 +34,37 @@ namespace Bottleships
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
+            base.OnLoad(e);            
 
-            Game = CreateGame();
+            this.Timer = new Timer();
+            this.Timer.Tick += Timer_Tick;
+            this.Timer.Interval = 25;
+            this.Timer.Start();
+            
+            this.DrawMenu();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if(ScrollingXPos <= -200) ScrollingXPos = this.pictureBox1.Width;
+            ScrollingXPos -= 2;
+
+            RefreshScreen();
+        }
+
+        public void RefreshScreen()
+        {
+            if(this.Game!= null)
+            {
+                this.DrawGameScreen();
+                return;
+            }
+
+            if(this.Server != null)
+            {
+                return;
+            }
+
             this.DrawMenu();
         }
 
@@ -38,11 +74,25 @@ namespace Bottleships
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
                 gfx.DrawString("Bottleships", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 10));
+
+                gfx.DrawString("Test Bot Locally", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White: Brushes.Black, new PointF(10, 75));
+                gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 110));
+                gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 145));
+                gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 180));
+
+                //var playerNames = $"0 Players Online";
+                //gfx.DrawString(playerNames, new Font(FontFamily.GenericMonospace, 12), Brushes.Black, ScrollingXPos, this.pictureBox1.Height - 30);
             }
 
             UpdateScreen(bitmap);
         }
 
+
+        public void DrawGameScreen()
+        {
+            var fleet = this.Game.Fleets.ElementAt(FleetDisplayIndex);
+            this.DrawGameScreen(fleet);
+        }
 
         public void DrawGameScreen(Fleet fleet)
         {
@@ -121,35 +171,73 @@ namespace Bottleships
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            Game.SinkShipsWhichCollideOrFallOutOfBounds();
-            if(e.KeyData == Keys.Left && FleetDisplayIndex > 0)
+            if(Game != null)
             {
-                FleetDisplayIndex--;
-            }
-            if(e.KeyData == Keys.Right && FleetDisplayIndex + 2 <= Game.Fleets.Count())
-            {
-                FleetDisplayIndex++;
-            }
-
-            // get shots
-            if(e.KeyData == Keys.Space)
-            {
-                List<Shot> shots = new List<Shot>();
-                foreach(var fleet in Game.Fleets)
+                Game.SinkShipsWhichCollideOrFallOutOfBounds();
+                if (e.KeyData == Keys.Left && FleetDisplayIndex > 0)
                 {
-                    shots.AddRange(fleet.Player.GetShots(Game, fleet));
+                    FleetDisplayIndex--;
+                }
+                if (e.KeyData == Keys.Right && FleetDisplayIndex + 2 <= Game.Fleets.Count())
+                {
+                    FleetDisplayIndex++;
                 }
 
-                Game.LastTurnShots = shots;
-                foreach(var shot in shots)
+                // get shots
+                if (e.KeyData == Keys.Space)
                 {
-                    shot.Fleet.ResolveShot(shot.Coordinates);
+                    List<Shot> shots = new List<Shot>();
+                    foreach (var fleet in Game.Fleets)
+                    {
+                        shots.AddRange(fleet.Player.GetShots(Game, fleet));
+                    }
+
+                    Game.LastTurnShots = shots;
+                    foreach (var shot in shots)
+                    {
+                        shot.Fleet.ResolveShot(shot.Coordinates);
+                    }
                 }
+
+                var fleetToDisplay = Game.Fleets.ElementAt(FleetDisplayIndex);
+
+                DrawGameScreen(fleetToDisplay);
+
+                return;
             }
-
-            var fleetToDisplay = Game.Fleets.ElementAt(FleetDisplayIndex);
-
-            DrawGameScreen(fleetToDisplay);
+            if(Server != null)
+            {
+                return;
+            }
+            else // main menu
+            {
+                if (e.KeyData == Keys.Up && SelectedMenuIndex > 0)
+                {
+                    SelectedMenuIndex--;
+                }
+                if (e.KeyData == Keys.Down && SelectedMenuIndex < 4)
+                {
+                    SelectedMenuIndex++;
+                }
+                if(e.KeyData == Keys.Enter)
+                {
+                    switch(SelectedMenuIndex)
+                    {
+                        case 0:
+                            Game = CreateGame();
+                            this.Timer.Interval = 5000;
+                            this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            this.Close();
+                            break;
+                    }
+                }
+            }            
         }
 
         private Game CreateGame()
