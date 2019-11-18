@@ -72,7 +72,7 @@ namespace Bottleships
             var shipSquares = ship.GetSquares();
             foreach(var coords in shipSquares)
             {
-                gfx.FillRectangle(Brushes.Gray, new Rectangle(xBuffer + (coords.X * 26), yBuffer + (coords.Y * 26), 25, 25));
+                gfx.FillRectangle(Brushes.Gray, new Rectangle( 1+ xBuffer + (coords.X * 26), 1 + yBuffer + (coords.Y * 26), 25, 25));
             }
         }
 
