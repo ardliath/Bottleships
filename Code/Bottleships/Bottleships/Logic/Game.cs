@@ -11,6 +11,13 @@ namespace Bottleships.Logic
         public IEnumerable<Fleet> Fleets { get; set; }
 
         public IEnumerable<Shot> LastTurnShots { get; set; }
-        
+
+        public void SinkShipsWhichCollideOrFallOutOfBounds()
+        {
+            foreach(var fleet in Fleets)
+            {
+                fleet.SinkShipsWhichCollideOrFallOutOfBounds();
+            }
+        }
     }
 }

@@ -23,6 +23,33 @@ namespace Bottleships.Logic
                     }
                 }
             }
-        }        
+        }
+
+        public void SinkShipsWhichCollideOrFallOutOfBounds()
+        {
+            foreach(var ship in Ships)
+            {
+                var squares = ship.GetSquares();
+
+                if(squares.Any(s => s.X < 0
+                    || s.X > 9
+                    || s.Y < 0
+                    || s.Y > 9))
+                {
+                    ship.IsAfloat = false;
+                    continue;
+                }
+
+
+                var otherSquares = this.Ships.Where(s => !s.Equals(ship)).SelectMany(s => s.GetSquares());
+                var collisions = otherSquares.Where(s => squares.Contains(s));
+
+                if(collisions.Any())
+                {
+                    ship.IsAfloat = false;
+                    continue;
+                }
+            }
+        }
     }
 }

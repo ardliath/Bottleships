@@ -112,7 +112,8 @@ namespace Bottleships
 
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
-        {                                    
+        {
+            Game.SinkShipsWhichCollideOrFallOutOfBounds();
             if(e.KeyData == Keys.Left && FleetDisplayIndex > 0)
             {
                 FleetDisplayIndex--;

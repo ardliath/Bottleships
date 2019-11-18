@@ -40,7 +40,7 @@ namespace Bottleships.Logic
                 Player = this
             };
 
-            var rand = new Random();
+            var rand = new Random(Guid.NewGuid().GetHashCode());
             foreach(var clazz in classes.OrderByDescending(s => s.Size))
             {
                 var ship = new Ship
