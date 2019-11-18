@@ -31,5 +31,34 @@ namespace Bottleships.Logic
 
             return shots;
         }
+
+        public Fleet GetFleet(IEnumerable<Clazz> classes)
+        {
+            var ships = new List<Ship>();
+            var fleet = new Fleet
+            {
+                Player = this
+            };
+
+            var rand = new Random();
+            foreach(var clazz in classes.OrderByDescending(s => s.Size))
+            {
+                var ship = new Ship
+                {
+                    Class = clazz,
+                    Direction = (Direction)(1 + rand.Next(3)),
+                    Coordinates = new Coordinates
+                    {
+                        X = rand.Next(9),
+                        Y = rand.Next(9)
+                    }
+                };
+                ships.Add(ship);
+            }
+
+
+            fleet.Ships = ships;
+            return fleet;
+        }
     }
 }

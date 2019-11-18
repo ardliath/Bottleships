@@ -145,80 +145,30 @@ namespace Bottleships
 
         private Game CreateGame()
         {
-            return new Game
+            var adam = new Player { Name = "Adam" };
+            var joe = new Player { Name = "Joe" };
+
+            var classes = new Clazz[]
+            {
+                Clazz.AircraftCarrier,
+                Clazz.Battleship,
+                Clazz.Frigate,
+                Clazz.Gunboat,
+                Clazz.Submarine
+            };
+            var fleet1 = adam.GetFleet(classes);
+            var fleet2 = joe.GetFleet(classes);
+
+            var game = new Game
             {
                 Fleets = new Fleet[]
                 {
-                    new Fleet
-                    {
-                        Player = new Player
-                        {
-                            Name = "Adam"
-                        },
-                        Ships = new Ship[]
-                       {
-                           new Ship
-                           {
-                               Class = Clazz.Battleship,
-                               Coordinates = new Coordinates{ X = 3, Y = 4 },
-                               Direction = Direction.Right
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Gunboat,
-                               Coordinates = new Coordinates{ X = 7, Y = 3 },
-                               Direction = Direction.Up
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Submarine,
-                               Coordinates = new Coordinates{ X = 5, Y = 1 },
-                               Direction = Direction.Up
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Frigate,
-                               Coordinates = new Coordinates{ X = 1, Y = 8 },
-                               Direction = Direction.Left
-                           }
-                       }
-                    },
-                    new Fleet
-                    {
-                        Player = new Player
-                        {
-                            Name = "Joe"
-                        },
-                        Ships = new Ship[]
-                       {
-                           new Ship
-                           {
-                               Class = Clazz.Battleship,
-                               Coordinates = new Coordinates{ X = 1, Y = 7 },
-                               Direction = Direction.Left
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Gunboat,
-                               Coordinates = new Coordinates{ X = 7, Y = 8 },
-                               Direction = Direction.Down
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Submarine,
-                               Coordinates = new Coordinates{ X = 3, Y = 5 },
-                               Direction = Direction.Right
-                           },
-                           new Ship
-                           {
-                               Class = Clazz.Frigate,
-                               Coordinates = new Coordinates{ X = 1, Y = 2 },
-                               Direction = Direction.Left
-                           }
-                       }
-                    }
+                   fleet1,
+                   fleet2
                 }
             };
+
+            return game;
         }
 
     }
