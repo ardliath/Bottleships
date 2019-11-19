@@ -29,5 +29,17 @@ namespace Bottleships.Communication
         {
             throw new NotImplementedException();
         }
+
+        public static void RegisterCaptain(string serverUrl)
+        {
+            var bot = new MyCaptain();
+            var thisUrl = $"http://{Environment.MachineName}:6999";
+            new HttpTransmitter().SendMessage(serverUrl, "registerplayer", new ConnectedPlayer
+            {
+                Name = bot.GetName(),
+                SecretCode = bot.GetSecretCode(),
+                Url = thisUrl
+            });
+        }
     }
 }

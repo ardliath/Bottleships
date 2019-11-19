@@ -300,14 +300,8 @@ namespace Bottleships
                             this.Timer.Interval = 5000;
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
-                        case 1: // connect to server
-                            var bot = new MyCaptain();  // this would probably be better as a property of the form so state is maintained
-                            new HttpTransmitter().SendMessage("http://localhost:5999", "registerplayer", new ConnectedPlayer // the server name should be editable
-                            {
-                                Name = bot.GetName(),
-                                SecretCode = bot.GetSecretCode(),
-                                Url = "http://localhost:5999" // this should be constructed from the PC name
-                            });
+                        case 1: // connect to server                                                       
+                            RemoteCommander.RegisterCaptain("http://localhost:5999"); // the server name should be editable
                             break;
                         case 2: // host server
                             this.Game = null;
