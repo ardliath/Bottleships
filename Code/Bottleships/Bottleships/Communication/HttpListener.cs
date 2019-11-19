@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Bottleships.Communication
 {
-    public class HttpListenerClass
+    public class HttpListenerClass : IDisposable
     {
         private readonly HttpListener _listener;
         private readonly Thread _listenerThread;

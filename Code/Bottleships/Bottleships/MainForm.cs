@@ -270,6 +270,9 @@ namespace Bottleships
                                     fleet2
                                 }
                             };
+
+                            player1.Commander.GetPlacements(classes);
+
                             break;
                         case 1: // abort
                             this.Server.StopListening();
@@ -300,8 +303,12 @@ namespace Bottleships
                             this.Timer.Interval = 5000;
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
-                        case 1: // connect to server                                                       
-                            RemoteCommander.RegisterCaptain("http://localhost:5999"); // the server name should be editable
+                        case 1: // connect to server   
+                            var server = "http://localhost:5999"; // the server name should be editable
+                            RemoteCommander.RegisterCaptain(server);
+                            var client = new Client(server);
+                            client.OnStatusUpdate += Client_OnStatusUpdate;
+                            client.PlayGame();
                             break;
                         case 2: // host server
                             this.Game = null;
@@ -316,6 +323,11 @@ namespace Bottleships
                     }
                 }
             }
+        }
+
+        private void Client_OnStatusUpdate(object sender, ClientUpdateEventArgs e)
+        {
+            
         }
 
         private Game CreateLocalGame()

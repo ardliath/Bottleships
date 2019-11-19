@@ -22,7 +22,12 @@ namespace Bottleships.Communication
 
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
         {
-            throw new NotImplementedException();
+            new HttpTransmitter().SendMessage(_connectedPlayer.Url, "getplacements", new PlacementRequest
+            {
+                Classes = classes.Select(c => c.Name)
+            });
+
+            return new Placement[] { };
         }
 
         public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
