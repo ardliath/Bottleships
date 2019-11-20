@@ -310,7 +310,7 @@ namespace Bottleships
                             RemoteCommander.RegisterCaptain(server);
                             this.Client = new Client(server);
                             this.Client.OnStatusUpdate += Client_OnStatusUpdate;
-                            this.Client.PlayGame();
+                            this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem
                             break;
                         case 2: // host server
                             this.Game = null;
@@ -320,7 +320,9 @@ namespace Bottleships
                             this.DrawServerScreen();
                             break;
                         default:
-                            this.Close();
+                            this?.Client.EndGame(); // last ditch in case we've not shut things down properly
+                            this?.Server.StopListening();
+                            this.Close();                            
                             break;
                     }
                 }

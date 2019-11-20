@@ -60,5 +60,11 @@ namespace Bottleships.Communication
                 }
             }
         }
+
+        public void EndGame()
+        {
+            _listener?.Stop();
+            _listener?.Dispose();
+        }
     }
 }
