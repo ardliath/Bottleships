@@ -22,7 +22,7 @@ namespace Bottleships.Communication
 
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
         {
-            new HttpTransmitter().SendMessage(_connectedPlayer.Url, "getplacements", new PlacementRequest
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "getplacements", new PlacementRequest
             {
                 Classes = classes.Select(c => c.Name)
             });

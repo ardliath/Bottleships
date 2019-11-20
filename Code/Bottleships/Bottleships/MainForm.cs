@@ -21,6 +21,8 @@ namespace Bottleships
         public int FleetDisplayIndex;
         public Game Game { get; set; }
 
+        public Client Client { get; set; }
+
         public Server Server { get; set; }
 
         public Timer Timer { get; set; }
@@ -306,9 +308,9 @@ namespace Bottleships
                         case 1: // connect to server   
                             var server = "http://localhost:5999"; // the server name should be editable
                             RemoteCommander.RegisterCaptain(server);
-                            var client = new Client(server);
-                            client.OnStatusUpdate += Client_OnStatusUpdate;
-                            client.PlayGame();
+                            this.Client = new Client(server);
+                            this.Client.OnStatusUpdate += Client_OnStatusUpdate;
+                            this.Client.PlayGame();
                             break;
                         case 2: // host server
                             this.Game = null;

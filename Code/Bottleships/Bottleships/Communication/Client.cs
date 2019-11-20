@@ -17,24 +17,22 @@ namespace Bottleships.Communication
         private ICaptain _myCaptain;
 
         private HttpTransmitter _transmitter;
+        private HttpListenerClass _listener;
 
         public Client(string serverUrl)
         {
             _serverUrl = serverUrl;
             _myCaptain = new MyCaptain();
             _transmitter = new HttpTransmitter();
+            _listener = new HttpListenerClass(3);
         }
 
         public event EventHandler<ClientUpdateEventArgs> OnStatusUpdate;
 
         public void PlayGame()
-        {            
-            using (var httpListener = new HttpListenerClass(3))
-            {
-                httpListener.Start(6999);
-                httpListener.ProcessRequest += HttpListener_ProcessRequest;
-
-            }                
+        {
+            _listener.Start(6999);
+            _listener.ProcessRequest += HttpListener_ProcessRequest;
         }
 
         private void HttpListener_ProcessRequest(System.Net.HttpListenerContext context)
