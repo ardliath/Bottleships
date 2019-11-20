@@ -25,11 +25,13 @@ namespace Bottleships
 
         public Server Server { get; set; }
 
+        public string OverrideMessage { get; set; }
+
         public Timer Timer { get; set; }
 
         public int ScrollingXPos = 0;
 
-        public int SelectedMenuIndex = 0;
+        public int SelectedMenuIndex = 0;        
 
         public MainForm()
         {
@@ -59,6 +61,12 @@ namespace Bottleships
 
         public void RefreshScreen()
         {
+            if(!string.IsNullOrWhiteSpace(this.OverrideMessage))
+            {
+                this.DrawOverrideMessageScreen();
+                return;
+            }
+
             if(this.Game!= null)
             {
                 this.DrawGameScreen();
@@ -85,6 +93,20 @@ namespace Bottleships
                 gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 110));
                 gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 145));
                 gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 180));
+            }
+
+            UpdateScreen(bitmap);
+        }
+
+        private void DrawOverrideMessageScreen()
+        {
+            var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
+            using (Graphics gfx = Graphics.FromImage(bitmap))
+            {
+                StringFormat format = new StringFormat();
+                format.LineAlignment = StringAlignment.Center;
+                format.Alignment = StringAlignment.Center;
+                gfx.DrawString(this.OverrideMessage, new Font(FontFamily.GenericMonospace, 22), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height), format);
             }
 
             UpdateScreen(bitmap);
@@ -311,6 +333,10 @@ namespace Bottleships
                             this.Client = new Client(server);
                             this.Client.OnStatusUpdate += Client_OnStatusUpdate;
                             this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem
+
+                            this.OverrideMessage = "Playing Remote Game";
+                            this.RefreshScreen();
+
                             break;
                         case 2: // host server
                             this.Game = null;
@@ -320,8 +346,8 @@ namespace Bottleships
                             this.DrawServerScreen();
                             break;
                         default:
-                            this?.Client.EndGame(); // last ditch in case we've not shut things down properly
-                            this?.Server.StopListening();
+                            this.Client?.EndGame(); // last ditch in case we've not shut things down properly
+                            this.Server?.StopListening();
                             this.Close();                            
                             break;
                     }
