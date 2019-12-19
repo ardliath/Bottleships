@@ -31,9 +31,15 @@ namespace Bottleships.Communication
             return JsonConvert.DeserializeObject<IEnumerable<Placement>>(data);
         }
 
-        public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
+        public IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots)
         {
-            throw new NotImplementedException();
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "getshots", new ShotRequest
+            {
+                NumberOfShots = numberOfShots,
+                EnemyFleets = enemyFleetInfo
+            });
+
+            return JsonConvert.DeserializeObject<IEnumerable<Shot>>(data);
         }
 
         public static void RegisterCaptain(string serverUrl)

@@ -26,9 +26,9 @@ namespace Bottleships.Communication
             return Captain.GetPlacements(classes);
         }
 
-        public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
-        {
-            return Captain.GetShots(game, myFleet);
+        public IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots)
+        {            
+            return Captain.GetShots(enemyFleetInfo, numberOfShots);
         }
     }
 }

@@ -162,7 +162,7 @@ namespace Bottleships
                 {
                     foreach (var lastTurnShot in this.Game.LastTurnShots)
                     {
-                        if (fleet.Equals(lastTurnShot.Fleet))
+                        if (fleet.Player.Name.Equals(lastTurnShot.FleetName))
                         {
                             gfx.FillRectangle(Brushes.DarkBlue, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
                         }
@@ -245,9 +245,14 @@ namespace Bottleships
                     }
 
                     Game.LastTurnShots = shots;
+                    
                     foreach (var shot in shots)
                     {
-                        shot.Fleet.ResolveShot(shot.Coordinates);
+                        var fleet = Game.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
+                        if (fleet != null)
+                        {
+                            fleet.ResolveShot(shot.Coordinates);
+                        }
                     }
                 }
 

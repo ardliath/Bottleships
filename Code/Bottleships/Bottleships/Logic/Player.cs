@@ -19,7 +19,14 @@ namespace Bottleships.Logic
 
         public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
         {
-            return Commander.GetShots(game, myFleet);
+            var numberOfShots = myFleet.Ships.Count(s => s.IsAfloat);
+            var enemyFleets = game.Fleets.Where(f => !f.Equals(myFleet)).Select(f => new EnemyFleetInfo
+            {
+                Name = f.Player.Name,
+                NumberOfAfloatShipts = f.Ships.Count(s => s.IsAfloat)
+            });
+
+            return Commander.GetShots(enemyFleets, numberOfShots);
         }
 
         public Fleet GetFleet(IEnumerable<Clazz> classes)

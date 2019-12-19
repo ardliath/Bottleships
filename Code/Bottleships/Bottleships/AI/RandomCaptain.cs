@@ -37,13 +37,13 @@ namespace Bottleships.AI
             return placements;
         }
 
-        public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)
+        public IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots)
         {
             var rand = new Random();
             var shots = new List<Shot>();
-            var target = game.Fleets.Where(f => !f.Equals(myFleet)).FirstOrDefault();
+            var target = enemyFleetInfo.FirstOrDefault();
 
-            for (int i = 0; i < myFleet.Ships.Count(s => s.IsAfloat); i++)
+            for (int i = 0; i < numberOfShots; i++)
             {
                 var coords = new Coordinates
                 {
@@ -54,7 +54,7 @@ namespace Bottleships.AI
                 shots.Add(new Shot
                 {
                     Coordinates = coords,
-                    Fleet = target
+                    FleetName = target.Name
                 });
             }
 

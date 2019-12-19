@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bottleships.Communication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Bottleships.Logic
 {
     public class Shot
     {
-        public Fleet Fleet { get; set; }
+        public string FleetName { get; set; }
         public Coordinates Coordinates { get; set; }
     }
 }

@@ -70,6 +70,21 @@ namespace Bottleships.Communication
                     sw.WriteLine(JsonConvert.SerializeObject(placements));
                 }
             }
+
+            if (method.Equals("getshots"))
+            {
+                var data = JsonConvert.DeserializeObject<ShotRequest>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+                
+                var placements = _myCaptain.GetShots(data.EnemyFleets, data.NumberOfShots);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(placements));
+                }
+            }
         }
 
         public void EndGame()

@@ -53,6 +53,7 @@
     <Compile Include="Communication\Client.cs" />
     <Compile Include="Communication\ClientUpdateEventArgs.cs" />
     <Compile Include="Communication\ConnectedPlayer.cs" />
+    <Compile Include="Communication\EnemyFleetInfo.cs" />
     <Compile Include="Communication\HttpListener.cs" />
     <Compile Include="Communication\HttpTransmitter.cs" />
     <Compile Include="Communication\ICaptain.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Communication\PlacementRequest.cs" />
     <Compile Include="Communication\RemoteCommander.cs" />
     <Compile Include="Communication\Server.cs" />
+    <Compile Include="Communication\ShotRequest.cs" />
     <Compile Include="Logic\Clazz.cs" />
     <Compile Include="Logic\Coordinates.cs" />
     <Compile Include="Logic\Direction.cs" />
