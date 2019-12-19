@@ -52,7 +52,18 @@ namespace Bottleships.Communication
                 context.Response.StatusCode = (int)HttpStatusCode.OK;
                 context.Response.ContentType = "text/plain";
 
-                var placements = _myCaptain.GetPlacements(new Clazz[] { });                
+                var allClasses = Clazz.AllClasses;
+                var requestedClasses = new List<Clazz>();
+                foreach(var clazz in data.Classes)
+                {
+                    var matchingClass = allClasses.SingleOrDefault(c => c.Name.Equals(clazz, StringComparison.CurrentCultureIgnoreCase));
+                    if(matchingClass != null)
+                    {
+                        requestedClasses.Add(matchingClass);
+                    }
+                }
+
+                var placements = _myCaptain.GetPlacements(requestedClasses);
 
                 using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
                 {

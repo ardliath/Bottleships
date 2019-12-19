@@ -295,7 +295,10 @@ namespace Bottleships
                                 }
                             };
 
-                            player1.Commander.GetPlacements(classes);
+                            var placements = player1.Commander.GetPlacements(classes);
+
+                            this.OverrideMessage = "Configuring Games";
+                            this.RefreshScreen();
 
                             break;
                         case 1: // abort

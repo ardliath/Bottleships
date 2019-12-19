@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bottleships.Logic;
+using Newtonsoft.Json;
 
 namespace Bottleships.Communication
 {
@@ -26,8 +27,8 @@ namespace Bottleships.Communication
             {
                 Classes = classes.Select(c => c.Name)
             });
-
-            return new Placement[] { };
+            
+            return JsonConvert.DeserializeObject<IEnumerable<Placement>>(data);
         }
 
         public IEnumerable<Shot> GetShots(Game game, Fleet myFleet)

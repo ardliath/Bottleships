@@ -12,11 +12,31 @@ namespace Bottleships.Logic
         public static Clazz Battleship = new Clazz("Battleship", 4);
         public static Clazz Frigate = new Clazz("Frigate", 3);
         public static Clazz Submarine = new Clazz("Submarine", 3);
-        public static Clazz Gunboat = new Clazz("Submarine", 2);
+        public static Clazz Gunboat = new Clazz("Gunboat", 2);
+
+        public static IEnumerable<Clazz> AllClasses
+        {
+            get
+            {
+                return new Clazz[]
+                {
+                    AircraftCarrier,
+                    Battleship,
+                    Frigate,
+                    Submarine,
+                    Gunboat
+                };
+            }
+        }
 
 
         public string Name { get; protected set; }
         public int Size { get; protected set; }
+
+        protected Clazz()
+        {
+
+        }
 
         protected Clazz(string name, int size)
         {
