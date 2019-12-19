@@ -30,10 +30,10 @@ namespace Bottleships.Logic
         }
 
 
-        public string Name { get; protected set; }
-        public int Size { get; protected set; }
+        public string Name { get; set; }
+        public int Size { get; set; }
 
-        protected Clazz()
+        public Clazz() // for serialising only
         {
 
         }

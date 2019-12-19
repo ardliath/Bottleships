@@ -286,7 +286,7 @@ namespace Bottleships
                             var fleet1 = player1.GetFleet(classes);
                             var fleet2 = player2.GetFleet(classes);
 
-                            var game = new Game
+                            this.Game = new Game
                             {
                                 Fleets = new Fleet[]
                                 {
@@ -295,10 +295,8 @@ namespace Bottleships
                                 }
                             };
 
-                            var placements = player1.Commander.GetPlacements(classes);
-
-                            this.OverrideMessage = "Configuring Games";
-                            this.RefreshScreen();
+                            this.Timer.Interval = 5000;
+                            this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
 
                             break;
                         case 1: // abort
@@ -389,6 +387,14 @@ namespace Bottleships
             };
 
             return game;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.Client?.EndGame();
+            this.Server?.StopListening(); // catch all
+
+            base.OnClosing(e);
         }
     }
 }
