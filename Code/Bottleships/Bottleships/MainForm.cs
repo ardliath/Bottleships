@@ -18,7 +18,7 @@ namespace Bottleships
 {
     public partial class MainForm : Form
     {
-        public int FleetDisplayIndex { get; set; }
+        public int? FleetDisplayIndex { get; set; }
 
         public int? FleetShootingDisplayIndex { get; set; }
 
@@ -152,7 +152,7 @@ namespace Bottleships
 
         public void DrawGameScreen()
         {
-            var fleetIndex = FleetShootingDisplayIndex ?? FleetDisplayIndex;
+            var fleetIndex = FleetShootingDisplayIndex ?? FleetDisplayIndex ?? 0;
             var fleet = this.Game.Fleets.ElementAt(fleetIndex);
             this.DrawGameScreen(fleet);
         }
@@ -208,7 +208,7 @@ namespace Bottleships
         {
             var isShooting = this.FleetShootingDisplayIndex == null;
             var fleetName = fleet.Player.Name;
-            var shooter = this.Game.Fleets.ElementAt(this.FleetDisplayIndex).Player.Name;
+            var shooter = this.Game.Fleets.ElementAt(this.FleetDisplayIndex.Value).Player.Name;
             return isShooting
                 ? $"{fleetName} is taking aim..."
                 : $"{fleetName} is taking fire from {shooter}";
@@ -249,16 +249,20 @@ namespace Bottleships
                 if (this.FleetsToShowShotsAt == null || this.FleetsToShowShotsAt.Count == 0)
                 {
                     Game.SinkShipsWhichCollideOrFallOutOfBounds();
-                    if (this.FleetDisplayIndex == this.Game.Fleets.Count() - 1)
+                    if(this.FleetShootingDisplayIndex == null) // first turn
                     {
                         this.FleetDisplayIndex = 0;
                     }
-                    else
+                    else if (this.FleetDisplayIndex == this.Game.Fleets.Count() - 1) // last one, flip back to start
+                    {
+                        this.FleetDisplayIndex = 0;
+                    }
+                    else // otherwise scroll right
                     {
                         this.FleetDisplayIndex++;
                     }
 
-                    var activeFleet = this.Game.Fleets.ElementAt(this.FleetDisplayIndex);
+                    var activeFleet = this.Game.Fleets.ElementAt(this.FleetDisplayIndex.Value);
                     var shots = activeFleet.Player.GetShots(this.Game, activeFleet);
                     this.Game.LastTurnShots = shots;
 
@@ -326,7 +330,7 @@ namespace Bottleships
                     }
                 }
 
-                var fleetToDisplay = Game.Fleets.ElementAt(FleetDisplayIndex);
+                var fleetToDisplay = Game.Fleets.ElementAt(FleetDisplayIndex.Value);
 
                 DrawGameScreen(fleetToDisplay);
 
