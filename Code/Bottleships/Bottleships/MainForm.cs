@@ -18,7 +18,7 @@ namespace Bottleships
 {
     public partial class MainForm : Form
     {
-        public int FleetDisplayIndex;
+        public int FleetDisplayIndex { get; set; }
 
         public int? FleetShootingDisplayIndex { get; set; }
 
@@ -194,13 +194,25 @@ namespace Bottleships
 
                 StringFormat format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
-                format.Alignment = StringAlignment.Center;                
-                gfx.DrawString(fleet.Player.Name, new Font(FontFamily.GenericMonospace, 22), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, yBuffer), format);
+                format.Alignment = StringAlignment.Center;
+                var text = GetTitleText(fleet);
+                gfx.DrawString(text, new Font(FontFamily.GenericMonospace, 22), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, yBuffer), format);
 
             }
 
 
             this.UpdateScreen(bitmap);
+        }
+
+        private string GetTitleText(Fleet fleet)
+        {
+            var isShooting = this.FleetShootingDisplayIndex == null;
+            var fleetName = fleet.Player.Name;
+            var shooter = this.Game.Fleets.ElementAt(this.FleetDisplayIndex).Player.Name;
+            return isShooting
+                ? $"{fleetName} is taking aim..."
+                : $"{fleetName} is taking fire from {shooter}";
+
         }
 
         private void DrawShip(Graphics gfx, Ship ship, int xBuffer, int yBuffer)
