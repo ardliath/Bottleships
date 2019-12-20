@@ -371,7 +371,9 @@ namespace Bottleships
                             };
 
                             this.Timer.Interval = 5000;
-                            this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
+                            this.OverrideMessage = "Starting Hosted Game";
+                            this.DrawOverrideMessageScreen();
+                            this.OverrideMessage = null;
 
                             break;
                         case 1: // abort
@@ -399,10 +401,15 @@ namespace Bottleships
                     {
                         case 0: // play locally
                             this.Server = null;
+
+                            this.OverrideMessage = "Starting Local Game";
+                            this.DrawOverrideMessageScreen();
+                            this.OverrideMessage = null;
+
                             Game = CreateLocalGame();
                             this.Timer.Interval = 5000;
                             this.Timer.Start();
-                            this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
+                                                        
                             break;
                         case 1: // connect to server   
                             var server = "http://localhost:5999"; // the server name should be editable
