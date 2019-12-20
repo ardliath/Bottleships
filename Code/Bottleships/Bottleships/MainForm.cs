@@ -56,6 +56,11 @@ namespace Bottleships
             if(ScrollingXPos <= -200) ScrollingXPos = this.pictureBox1.Width;
             ScrollingXPos -= 2;
 
+            if(this.Game != null)
+            {
+                this.PlayGameTurn();
+            }
+
             RefreshScreen();
         }
 
@@ -67,7 +72,7 @@ namespace Bottleships
                 return;
             }
 
-            if(this.Game!= null)
+            if(this.Game != null)
             {
                 this.DrawGameScreen();
                 return;
@@ -219,7 +224,20 @@ namespace Bottleships
             }
         }
 
-
+        private void PlayGameTurn()
+        {
+            if(this.Game != null)
+            {
+                if (this.FleetDisplayIndex == this.Game.Fleets.Count() - 1)
+                {
+                    this.FleetDisplayIndex = 0;
+                }
+                else
+                {
+                    this.FleetDisplayIndex++;
+                }
+            }
+        }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
@@ -331,6 +349,7 @@ namespace Bottleships
                             this.Server = null;
                             Game = CreateLocalGame();
                             this.Timer.Interval = 5000;
+                            this.Timer.Start();
                             this.DrawGameScreen(this.Game.Fleets.FirstOrDefault());
                             break;
                         case 1: // connect to server   

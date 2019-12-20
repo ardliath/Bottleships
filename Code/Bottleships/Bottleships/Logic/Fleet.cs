@@ -9,6 +9,13 @@ namespace Bottleships.Logic
         public Player Player { get; set; }
 
         public IEnumerable<Ship> Ships { get; set; }
+        public bool StillHasShipsAfloat
+        {
+            get
+            {
+                return this.Ships.Any(s => s.IsAfloat);
+            }
+        }
 
         public void ResolveShot(Coordinates coordinates)
         {
