@@ -19,6 +19,11 @@ namespace Bottleships
     public partial class MainForm : Form
     {
         public int FleetDisplayIndex;
+
+        public int? FleetShootingDisplayIndex { get; set; }
+
+        public Queue<int> FleetsToShowShotsAt { get; set; }
+
         public Game Game { get; set; }
 
         public Client Client { get; set; }
@@ -147,7 +152,8 @@ namespace Bottleships
 
         public void DrawGameScreen()
         {
-            var fleet = this.Game.Fleets.ElementAt(FleetDisplayIndex);
+            var fleetIndex = FleetShootingDisplayIndex ?? FleetDisplayIndex;
+            var fleet = this.Game.Fleets.ElementAt(fleetIndex);
             this.DrawGameScreen(fleet);
         }
 
@@ -226,15 +232,49 @@ namespace Bottleships
 
         private void PlayGameTurn()
         {
-            if(this.Game != null)
+            if (this.Game != null)
             {
-                if (this.FleetDisplayIndex == this.Game.Fleets.Count() - 1)
+                if (this.FleetsToShowShotsAt == null || this.FleetsToShowShotsAt.Count == 0)
                 {
-                    this.FleetDisplayIndex = 0;
+                    Game.SinkShipsWhichCollideOrFallOutOfBounds();
+                    if (this.FleetDisplayIndex == this.Game.Fleets.Count() - 1)
+                    {
+                        this.FleetDisplayIndex = 0;
+                    }
+                    else
+                    {
+                        this.FleetDisplayIndex++;
+                    }
+
+                    var activeFleet = this.Game.Fleets.ElementAt(this.FleetDisplayIndex);
+                    var shots = activeFleet.Player.GetShots(this.Game, activeFleet);
+                    this.Game.LastTurnShots = shots;
+
+                    this.FleetsToShowShotsAt = new Queue<int>();
+                    int i = 0;
+                    foreach(var fleet in this.Game.Fleets)
+                    {
+                        if(shots.Any(s => s.FleetName.Equals(fleet.Player.Name, StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            this.FleetsToShowShotsAt.Enqueue(i);
+                        }
+                        i++;
+                    }
+
+                    foreach (var shot in shots)
+                    {
+                        var fleet = Game.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
+                        if (fleet != null)
+                        {
+                            fleet.ResolveShot(shot.Coordinates);
+                        }
+                    }
+
+                    FleetShootingDisplayIndex = null;
                 }
                 else
                 {
-                    this.FleetDisplayIndex++;
+                    this.FleetShootingDisplayIndex = this.FleetsToShowShotsAt.Dequeue();
                 }
             }
         }
