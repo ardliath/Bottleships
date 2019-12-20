@@ -1,3 +1,3 @@
 # Bottleships
 
-![BotWars Screenshot](/Screenshots/VeryEarlyVersion.png.png)
+![Botleships Screenshot](/Screenshots/VeryEarlyVersion.png)
