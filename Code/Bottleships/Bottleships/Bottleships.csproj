@@ -63,6 +63,7 @@
     <Compile Include="Communication\RemoteCommander.cs" />
     <Compile Include="Communication\Server.cs" />
     <Compile Include="Communication\ShotRequest.cs" />
+    <Compile Include="GameViewInformation.cs" />
     <Compile Include="Logic\Clazz.cs" />
     <Compile Include="Logic\Coordinates.cs" />
     <Compile Include="Logic\Direction.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="MyCaptain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewPhase.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

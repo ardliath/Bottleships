@@ -9,6 +9,11 @@ namespace Bottleships.Logic
     {
         public string Name { get; private set; }
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         public ICommander Commander { get; private set; }
 
         public Player(ICommander commander)

@@ -10,11 +10,25 @@ namespace Bottleships.Logic
     {
         public Fleet Winner { get; set; }
 
+        private Fleet _playerWhosTurnItIs;
+
+        public Fleet PlayerWhosTurnItIs
+        {
+            get
+            {
+                if (_playerWhosTurnItIs == null)
+                {
+                    _playerWhosTurnItIs = this.Fleets.First();
+                }
+                return _playerWhosTurnItIs;
+            }
+        }
+
         public bool GameOver { get; set; }
 
         public IEnumerable<Fleet> Fleets { get; set; }
 
-        public IEnumerable<Shot> LastTurnShots { get; set; }
+        public IEnumerable<Shot> CurrentPlayersShots { get; set; }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()
         {
@@ -45,5 +59,34 @@ namespace Bottleships.Logic
 
             this.GameOver = false;
         }
+
+
+        public void MoveTurnOntoNextPlayer()
+        {            
+            Fleet nextPlayer = null;
+            bool currentPlayerPassed = false;
+            foreach(var fleet in this.Fleets)
+            {
+                if(fleet.Equals(this.PlayerWhosTurnItIs))
+                {
+                    currentPlayerPassed = true;
+                    continue;
+                }
+
+                if(currentPlayerPassed && fleet.StillHasShipsAfloat)
+                {
+                    nextPlayer = fleet;
+                    break;
+                }
+            }
+
+            // if we've been all the way through with no joy (for example if the current player was at the end) then grab the first one
+            if (nextPlayer == null)
+            {                
+                nextPlayer = this.Fleets.FirstOrDefault(f => f.StillHasShipsAfloat);
+            }
+
+            _playerWhosTurnItIs = nextPlayer;
+        }               
     }
 }

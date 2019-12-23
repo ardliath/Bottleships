@@ -17,6 +17,11 @@ namespace Bottleships.Logic
             }
         }
 
+        public override string ToString()
+        {
+            return this.Player.ToString();
+        }
+
         public void ResolveShot(Coordinates coordinates)
         {
             foreach(var ship in Ships)
