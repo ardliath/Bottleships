@@ -11,5 +11,20 @@ namespace Bottleships.Logic
     {
         public string FleetName { get; set; }
         public Coordinates Coordinates { get; set; }
+
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Shot;
+            return other != null
+                && other.FleetName.Equals(this.FleetName)
+                && other.Coordinates.Equals(this.Coordinates);
+        }
+
+        public override int GetHashCode()
+        {
+            return 27 * this.Coordinates.GetHashCode() * this.FleetName.GetHashCode();
+        }
+
     }
 }

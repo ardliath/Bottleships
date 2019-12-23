@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\RandomCaptain.cs" />
+    <Compile Include="AI\SimpleCaptain.cs" />
     <Compile Include="Communication\Client.cs" />
     <Compile Include="Communication\ClientUpdateEventArgs.cs" />
     <Compile Include="Communication\ConnectedPlayer.cs" />

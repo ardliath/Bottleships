@@ -387,7 +387,7 @@ namespace Bottleships
                     {
                         case 0: // start a remote game
                             var player1 = new Player(new RemoteCommander(this.Server.ConnectedPlayers.FirstOrDefault()));
-                            var player2 = new Player(new LocalCommander(new RandomCaptain()));
+                            var player2 = new Player(new LocalCommander(new SimpleCaptain()));
 
                             var classes = new Clazz[]
                             {
@@ -488,7 +488,7 @@ namespace Bottleships
         private Game CreateLocalGame()
         {
             var player1 = new Player(new LocalCommander(new MyCaptain()));
-            var player2 = new Player(new LocalCommander(new RandomCaptain()));
+            var player2 = new Player(new LocalCommander(new SimpleCaptain()));
 
             var classes = new Clazz[]
             {
