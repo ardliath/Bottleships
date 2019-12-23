@@ -31,6 +31,7 @@ namespace Bottleships
         public Server Server { get; set; }
 
         public string OverrideMessage { get; set; }
+        public int? RemainingTicksToDisplayOverrideMessage { get; set; }
 
         public Timer Timer { get; set; }
 
@@ -71,19 +72,35 @@ namespace Bottleships
 
         public void RefreshScreen()
         {
-            if(!string.IsNullOrWhiteSpace(this.OverrideMessage))
-            {
-                this.DrawOverrideMessageScreen();
+            if (!string.IsNullOrWhiteSpace(this.OverrideMessage))
+            {                
+                if (!RemainingTicksToDisplayOverrideMessage.HasValue // if it's an infinite message
+                    || RemainingTicksToDisplayOverrideMessage.Value > 0) // or has time left to roll
+                {
+                    this.DrawOverrideMessageScreen();
+                }
+
+                if (RemainingTicksToDisplayOverrideMessage.HasValue) // decrememt the counter
+                {
+                    RemainingTicksToDisplayOverrideMessage--;
+                    if(RemainingTicksToDisplayOverrideMessage <=0)
+                    {
+                        RemainingTicksToDisplayOverrideMessage = null;
+                        OverrideMessage = null;
+                    }
+                }
+
                 return;
             }
 
             if(this.Game != null)
             {
-                if (this.Game.GameOver && FleetsToShowShotsAt?.Count > 0)
+                if (this.Game.GameOver && (FleetsToShowShotsAt == null || FleetsToShowShotsAt.Count == 0))
                 {                    
                     OverrideMessage = this.Game.Winner == null
                         ? "Draw!"
                         : $"{this.Game.Winner.Player.Name} wins!";
+                    RemainingTicksToDisplayOverrideMessage = 1; // only show for one tick
 
                     this.Game = null;
                 }
@@ -105,6 +122,10 @@ namespace Bottleships
 
         private void DrawMenu()
         {
+            if(Timer.Interval != 25)
+            {
+                this.Timer.Interval = 25;
+            }
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
@@ -258,8 +279,15 @@ namespace Bottleships
             if (this.Game != null)
             {
                 if (this.FleetsToShowShotsAt == null || this.FleetsToShowShotsAt.Count == 0)
-                {
+                {                    
                     Game.SinkShipsWhichCollideOrFallOutOfBounds();
+                    Game.CheckForWinners();
+                    if(Game.GameOver)
+                    {
+                        return;
+                    }
+
+
                     if (this.FleetShootingDisplayIndex == null) // first turn
                     {
                         this.FleetDisplayIndex = 0;
@@ -297,15 +325,12 @@ namespace Bottleships
                         }
                     }
 
-                    FleetShootingDisplayIndex = null;
+                    FleetShootingDisplayIndex = null;                    
                 }
                 else
                 {
                     this.FleetShootingDisplayIndex = this.FleetsToShowShotsAt.Dequeue();
-                }
-
-
-                Game.CheckForWinners();
+                }                
             }
         }
 
@@ -388,7 +413,7 @@ namespace Bottleships
                                 }
                             };
 
-                            this.Timer.Interval = 5000;
+                            this.Timer.Interval = 3000;
                             this.OverrideMessage = "Starting Hosted Game";
                             this.DrawOverrideMessageScreen();
                             this.OverrideMessage = null;
@@ -425,7 +450,7 @@ namespace Bottleships
                             this.OverrideMessage = null;
 
                             Game = CreateLocalGame();
-                            this.Timer.Interval = 5000;
+                            this.Timer.Interval = 3000;
                             this.Timer.Start();
                                                         
                             break;
