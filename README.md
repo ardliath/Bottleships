@@ -9,6 +9,8 @@ For earlier versions of BotWars take a look at [BotWars](https://github.com/davi
 
 This year the game is based on the game of Battleships, with each team creating an AI which competes against the others to prove it is the best admiral of the virtual seas.
 
+### What Have You Got So Far?
+
 The game is very much in the early versions:
 
 ![Botleships Screenshot](/Screenshots/VeryEarlyVersion.png)
