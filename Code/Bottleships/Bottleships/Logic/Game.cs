@@ -8,38 +8,42 @@ namespace Bottleships.Logic
 {
     public class Game
     {
+        public Fleet Winner { get; set; }
+
+        public bool GameOver { get; set; }
+
         public IEnumerable<Fleet> Fleets { get; set; }
 
         public IEnumerable<Shot> LastTurnShots { get; set; }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()
         {
-            foreach(var fleet in Fleets)
+            foreach (var fleet in Fleets)
             {
                 fleet.SinkShipsWhichCollideOrFallOutOfBounds();
             }
         }
 
         /// <summary>
-        /// Checks if the game is over
+        /// Checks if the game is over and sets the Winner/GameOver properties
         /// </summary>
-        /// <param name="winningFleet">The winning fleet (null if a draw or no winner)</param>
-        /// <returns>Whether the game is over</returns>
-        public bool CheckForWinners(out Fleet winningFleet)
+        public void CheckForWinners()
         {
-            winningFleet = null;
+            this.Winner = null;
             var fleetsWithShips = this.Fleets.Where(f => f.StillHasShipsAfloat);
             if (fleetsWithShips.Count() == 0)
             {
-                return true;
+                this.GameOver = true;
+                return;
             }
             else if (fleetsWithShips.Count() == 1)
             {
-                winningFleet = fleetsWithShips.Single();
-                return true;
+                this.Winner = fleetsWithShips.Single();
+                this.GameOver = true;
+                return;
             }
 
-            return false;
+            this.GameOver = false;
         }
     }
 }

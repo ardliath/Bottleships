@@ -79,7 +79,18 @@ namespace Bottleships
 
             if(this.Game != null)
             {
-                this.DrawGameScreen();
+                if (this.Game.GameOver && FleetsToShowShotsAt?.Count > 0)
+                {                    
+                    OverrideMessage = this.Game.Winner == null
+                        ? "Draw!"
+                        : $"{this.Game.Winner.Player.Name} wins!";
+
+                    this.Game = null;
+                }
+                else
+                {
+                    this.DrawGameScreen();
+                }
                 return;
             }
 
@@ -294,13 +305,7 @@ namespace Bottleships
                 }
 
 
-                if (Game.CheckForWinners(out Fleet winningFleet))
-                {
-                    this.Game = null;
-                    OverrideMessage = winningFleet == null
-                        ? "Draw!"
-                        : $"{winningFleet.Player.Name} wins!";
-                }
+                Game.CheckForWinners();
             }
         }
 
