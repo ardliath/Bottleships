@@ -14,7 +14,7 @@ namespace Bottleships.Logic
             return this.Name;
         }
 
-        public ICommander Commander { get; private set; }
+        protected ICommander Commander { get; private set; }
 
         public Player(ICommander commander)
         {
@@ -56,6 +56,11 @@ namespace Bottleships.Logic
 
             fleet.Ships = ships;
             return fleet;
+        }
+
+        public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            this.Commander.RespondToShots(results);
         }
     }
 }

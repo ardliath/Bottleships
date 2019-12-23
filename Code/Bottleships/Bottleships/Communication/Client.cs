@@ -85,6 +85,21 @@ namespace Bottleships.Communication
                     sw.WriteLine(JsonConvert.SerializeObject(placements));
                 }
             }
+
+            if (method.Equals("shotresult"))
+            {
+                var data = JsonConvert.DeserializeObject<IEnumerable<ShotResult>>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+
+                _myCaptain.RespondToShots(data);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+            }            
         }
 
         public void EndGame()

@@ -61,5 +61,10 @@ namespace Bottleships
 
             return shots;
         }
+
+        public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            
+        }
     }
 }

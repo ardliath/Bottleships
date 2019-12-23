@@ -53,5 +53,10 @@ namespace Bottleships.Communication
                 Url = thisUrl
             });
         }
+
+        public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "shotresult", results);
+        }
     }
 }

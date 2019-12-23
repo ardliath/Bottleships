@@ -73,6 +73,7 @@
     <Compile Include="Logic\Player.cs" />
     <Compile Include="Logic\Ship.cs" />
     <Compile Include="Logic\Shot.cs" />
+    <Compile Include="Logic\ShotResult.cs" />
     <Compile Include="Logic\Square.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

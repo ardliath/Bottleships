@@ -22,19 +22,22 @@ namespace Bottleships.Logic
             return this.Player.ToString();
         }
 
-        public void ResolveShot(Coordinates coordinates)
+        public ShotResult ResolveShot(Shot shot)
         {
             foreach(var ship in Ships)
             {
                 var squares = ship.GetSquares();
                 foreach(var shipSpace in squares)
                 {
-                    if(shipSpace.Equals(coordinates))
+                    if(shipSpace.Equals(shot.Coordinates))
                     {
-                        ship.RegisterDamage(coordinates);
+                        ship.RegisterDamage(shot.Coordinates);
+                        return new ShotResult(shot, true);
                     }
                 }
             }
+
+            return new ShotResult(shot, false);
         }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()

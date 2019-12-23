@@ -30,5 +30,10 @@ namespace Bottleships.Communication
         {            
             return Captain.GetShots(enemyFleetInfo, numberOfShots);
         }
+
+        public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            Captain.RespondToShots(results);
+        }
     }
 }

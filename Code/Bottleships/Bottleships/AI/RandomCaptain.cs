@@ -60,5 +60,10 @@ namespace Bottleships.AI
 
             return shots;
         }
+
+        public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            
+        }
     }
 }

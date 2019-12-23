@@ -318,15 +318,18 @@ namespace Bottleships
         private void DoTurn()
         {
             this.Game.CurrentPlayersShots = this.Game.PlayerWhosTurnItIs.Player.GetShots(this.Game, this.Game.PlayerWhosTurnItIs);
+            var results = new List<ShotResult>();
 
             foreach (var shot in this.Game.CurrentPlayersShots)
             {
                 var fleet = Game.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
                 if (fleet != null)
                 {
-                    fleet.ResolveShot(shot.Coordinates);
+                    results.Add(fleet.ResolveShot(shot));
                 }
             }
+
+            this.Game.PlayerWhosTurnItIs.Player.RespondToShots(results);
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -358,7 +361,7 @@ namespace Bottleships
                         var fleet = Game.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
                         if (fleet != null)
                         {
-                            fleet.ResolveShot(shot.Coordinates);
+                            fleet.ResolveShot(shot);
                         }
                     }
                 }
