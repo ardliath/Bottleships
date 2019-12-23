@@ -1,4 +1,4 @@
-﻿namespace Bottleships
+﻿namespace Bottleships.UI
 {
     public enum ViewPhase
     {

@@ -1,6 +1,7 @@
 ﻿using Bottleships.AI;
 using Bottleships.Communication;
 using Bottleships.Logic;
+using Bottleships.UI;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
