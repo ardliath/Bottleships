@@ -58,7 +58,9 @@ namespace Bottleships
             if(ScrollingXPos <= -200) ScrollingXPos = this.pictureBox1.Width;
             ScrollingXPos -= 2;
 
-            if (this.Game != null && !this.Game.GameOver)
+            if (this.Game != null
+                && (!this.Game.GameOver
+                || this.GameViewInformation.ShotImpactScreensToShow > 0))
             {
                 // Not all ticks are turns, the player takes a turn and then we have ticks which show the explosions
                 var isTurn = this.GameViewInformation.ViewPhase == ViewPhase.Aiming;
