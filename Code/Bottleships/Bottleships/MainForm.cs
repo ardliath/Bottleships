@@ -489,6 +489,7 @@ namespace Bottleships
         {
             var player1 = new Player(new LocalCommander(new MyCaptain()));
             var player2 = new Player(new LocalCommander(new SimpleCaptain()));
+            var player3 = new Player(new LocalCommander(new RandomCaptain()));
 
             var classes = new Clazz[]
             {
@@ -500,13 +501,15 @@ namespace Bottleships
             };
             var fleet1 = player1.GetFleet(classes);
             var fleet2 = player2.GetFleet(classes);
+            var fleet3 = player3.GetFleet(classes);
 
             var game = new Game
             {
                 Fleets = new Fleet[]
                 {
                    fleet1,
-                   fleet2
+                   fleet2,
+                   fleet3
                 }
             };            
 
