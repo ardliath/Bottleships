@@ -15,11 +15,6 @@ namespace Bottleships
             return "MyCaptain";
         }
 
-        public string GetSecretCode() // this should be abstracted down and away from the player
-        {
-            return "123";
-        }
-
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
         {
             var placements = new List<Placement>();

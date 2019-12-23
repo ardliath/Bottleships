@@ -49,7 +49,6 @@ namespace Bottleships.Communication
             new HttpTransmitter().SendMessage(serverUrl, "registerplayer", new ConnectedPlayer
             {
                 Name = bot.GetName(),
-                SecretCode = bot.GetSecretCode(),
                 Url = thisUrl
             });
         }
