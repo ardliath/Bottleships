@@ -64,6 +64,8 @@
     <Compile Include="Communication\RemoteCommander.cs" />
     <Compile Include="Communication\Server.cs" />
     <Compile Include="Communication\ShotRequest.cs" />
+    <Compile Include="Logic\Event.cs" />
+    <Compile Include="Logic\Round.cs" />
     <Compile Include="UI\GameViewInformation.cs" />
     <Compile Include="Logic\Clazz.cs" />
     <Compile Include="Logic\Coordinates.cs" />
