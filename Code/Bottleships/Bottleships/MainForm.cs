@@ -249,7 +249,7 @@ namespace Bottleships
                 if (this.FleetsToShowShotsAt == null || this.FleetsToShowShotsAt.Count == 0)
                 {
                     Game.SinkShipsWhichCollideOrFallOutOfBounds();
-                    if(this.FleetShootingDisplayIndex == null) // first turn
+                    if (this.FleetShootingDisplayIndex == null) // first turn
                     {
                         this.FleetDisplayIndex = 0;
                     }
@@ -268,9 +268,9 @@ namespace Bottleships
 
                     this.FleetsToShowShotsAt = new Queue<int>();
                     int i = 0;
-                    foreach(var fleet in this.Game.Fleets)
+                    foreach (var fleet in this.Game.Fleets)
                     {
-                        if(shots.Any(s => s.FleetName.Equals(fleet.Player.Name, StringComparison.CurrentCultureIgnoreCase)))
+                        if (shots.Any(s => s.FleetName.Equals(fleet.Player.Name, StringComparison.CurrentCultureIgnoreCase)))
                         {
                             this.FleetsToShowShotsAt.Enqueue(i);
                         }
@@ -291,6 +291,15 @@ namespace Bottleships
                 else
                 {
                     this.FleetShootingDisplayIndex = this.FleetsToShowShotsAt.Dequeue();
+                }
+
+
+                if (Game.CheckForWinners(out Fleet winningFleet))
+                {
+                    this.Game = null;
+                    OverrideMessage = winningFleet == null
+                        ? "Draw!"
+                        : $"{winningFleet.Player.Name} wins!";
                 }
             }
         }
