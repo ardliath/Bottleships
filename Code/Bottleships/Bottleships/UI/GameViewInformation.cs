@@ -7,8 +7,6 @@ namespace Bottleships.UI
 {
     public class GameViewInformation
     {
-        protected int? FleetDisplayIndex { get; set; }
-
         protected int? FleetShootingDisplayIndex { get; set; }
 
         public ViewPhase ViewPhase { get; set; }
@@ -31,30 +29,19 @@ namespace Bottleships.UI
             this.Game = game;
             this.ViewPhase = ViewPhase.Aiming;
         }
-
-        public void ScrollLeft()
-        {
-            if (FleetDisplayIndex > 0)
-            {
-                FleetDisplayIndex--;
-            }            
-        }
-
-        public void ScrollRight()
-        {
-            if (FleetDisplayIndex + 2 <= Game.Fleets.Count())
-            {
-                FleetDisplayIndex++;
-            }
-        }
         
 
         public Fleet GetFleetToView()
         {
-            var fleetIndex = FleetShootingDisplayIndex ?? FleetDisplayIndex ?? 0;
-            var fleet = this.Game.Fleets.ElementAt(fleetIndex);
-
-            return fleet;
+            if (this.ViewPhase == ViewPhase.Aiming)
+            {
+                return this.Game.PlayerWhosTurnItIs;
+            }
+            else
+            {
+                var fleetIndex = FleetShootingDisplayIndex.Value;
+                return this.Game.Fleets.ElementAt(fleetIndex);
+            }            
         }
 
         public void StartShowingExplosions(IEnumerable<int> fleetsBeingShotAt)

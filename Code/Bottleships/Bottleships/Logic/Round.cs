@@ -23,6 +23,10 @@ namespace Bottleships.Logic
         public void MoveOntoNextGame()
         {
             this.GameIndex++;
+            foreach (var fleet in this.CurrentGame.Fleets)
+            {
+                fleet.ResetFleet();
+            }
         }
     }
 }

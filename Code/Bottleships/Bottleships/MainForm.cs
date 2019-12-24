@@ -132,9 +132,10 @@ namespace Bottleships
                     OverrideMessage = this.CurrentGame.Winner == null // then show the winner's message
                         ? "Draw!"
                         : $"{this.CurrentGame.Winner.Player.Name} wins!";
-                    RemainingTicksToDisplayOverrideMessage = 1; // only show for one tick
-
+                    RemainingTicksToDisplayOverrideMessage = 3;
+                    
                     this.Event.CurrentRound.MoveOntoNextGame();
+                    this.GameViewInformation = new GameViewInformation(this.CurrentGame);
                 }
                 return;
             }
@@ -345,43 +346,6 @@ namespace Bottleships
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (this.CurrentGame != null)
-            {                
-                if (e.KeyData == Keys.Left)
-                {
-                    this.GameViewInformation.ScrollLeft();
-                }
-                if (e.KeyData == Keys.Right)
-                {
-                    this.GameViewInformation.ScrollRight();
-                }
-
-                // get shots
-                if (e.KeyData == Keys.Space)
-                {
-                    List<Shot> shots = new List<Shot>();
-                    foreach (var fleet in this.CurrentGame.Fleets)
-                    {
-                        shots.AddRange(fleet.Player.GetShots(this.CurrentGame, fleet));
-                    }
-
-                    this.CurrentGame.CurrentPlayersShots = shots;
-                    
-                    foreach (var shot in shots)
-                    {
-                        var fleet = this.CurrentGame.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
-                        if (fleet != null)
-                        {
-                            fleet.ResolveShot(shot);
-                        }
-                    }
-                }
-
-                var fleetToDisplay = this.GameViewInformation.GetFleetToView();
-                DrawGameScreen(fleetToDisplay);
-
-                return;
-            }
             if (Server != null)
             {
                 if (e.KeyData == Keys.Up && SelectedMenuIndex > 0)

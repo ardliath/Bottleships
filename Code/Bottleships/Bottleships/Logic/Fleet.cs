@@ -40,6 +40,15 @@ namespace Bottleships.Logic
             return new ShotResult(shot, false);
         }
 
+        public void ResetFleet()
+        {
+            foreach(var ship in Ships)
+            {
+                ship.DamageIndicies = new List<int>();
+                ship.IsAfloat = true;
+            }
+        }
+
         public void SinkShipsWhichCollideOrFallOutOfBounds()
         {
             foreach(var ship in Ships)
