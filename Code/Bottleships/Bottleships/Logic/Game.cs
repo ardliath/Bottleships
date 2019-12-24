@@ -24,6 +24,19 @@ namespace Bottleships.Logic
             }
         }
 
+        public IList<ScoreAwarded> Scores { get; private set; }
+
+        public IEnumerable<KeyValuePair<Player, int>> ScoresPerPlayer
+        {
+            get
+            {
+                return this.Scores
+                    .GroupBy(g => g.Player)
+                    .Select(g => new KeyValuePair<Player, int>(g.Key, g.Select(x => (int)x.Score).Sum()))
+                    .OrderByDescending(s => s.Value);
+            }
+        }
+
         public bool GameOver { get; set; }
 
         public IEnumerable<Fleet> Fleets { get; set; }
@@ -31,6 +44,7 @@ namespace Bottleships.Logic
         public Game(params Player[] players)
         {
             this.Players = players;
+            this.Scores = new List<ScoreAwarded>();
         }
 
         public IEnumerable<Shot> CurrentPlayersShots { get; set; }

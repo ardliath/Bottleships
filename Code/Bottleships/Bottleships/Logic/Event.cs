@@ -22,6 +22,17 @@ namespace Bottleships.Logic
             }
         }
 
+        public IEnumerable<KeyValuePair<Player, int>> ScoresPerPlayer
+        {
+            get
+            {
+                return this.Rounds.SelectMany(s => s.ScoresPerPlayer)
+                    .GroupBy(g => g.Key)
+                    .Select(g => new KeyValuePair<Player, int>(g.Key, g.Select(x => x.Value).Sum()))
+                    .OrderByDescending(s => s.Value);
+            }
+        }
+
         public void MoveOntoNextRound()
         {
             this.RoundIndex++;

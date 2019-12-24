@@ -165,6 +165,12 @@ namespace Bottleships
                 ? "Draw!"
                 : $"{this.CurrentGame.Winner.Player.Name} wins!";
             RemainingTicksToDisplayOverrideMessage = 3;
+
+            this.CurrentGame.Scores.Add(new ScoreAwarded
+            {
+                Player = this.CurrentGame.Winner.Player,
+                Score = Scores.WinningGame
+            });
         }
 
         private void DrawMenu()
@@ -355,7 +361,16 @@ namespace Bottleships
                 var fleet = this.CurrentGame.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
                 if (fleet != null)
                 {
-                    results.Add(fleet.ResolveShot(shot));
+                    var result = fleet.ResolveShot(shot);
+                    results.Add(result);
+                    if(result.WasAHit)
+                    {
+                        this.CurrentGame.Scores.Add(new ScoreAwarded
+                        {
+                            Player = this.CurrentGame.PlayerWhosTurnItIs.Player,
+                            Score = result.WasASink ? Scores.Sink : Scores.Hit
+                        });
+                    }
                 }
             }
 

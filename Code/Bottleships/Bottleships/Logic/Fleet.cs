@@ -31,13 +31,13 @@ namespace Bottleships.Logic
                 {
                     if(shipSpace.Equals(shot.Coordinates))
                     {
-                        ship.RegisterDamage(shot.Coordinates);
-                        return new ShotResult(shot, true);
+                        var damageResult = ship.RegisterDamage(shot.Coordinates);
+                        return new ShotResult(shot, true, damageResult == DamageResult.Sank);
                     }
                 }
             }
 
-            return new ShotResult(shot, false);
+            return new ShotResult(shot, false, false);
         }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()

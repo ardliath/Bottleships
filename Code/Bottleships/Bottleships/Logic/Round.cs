@@ -12,6 +12,17 @@ namespace Bottleships.Logic
 
         public IEnumerable<Clazz> Classes { get; set; }
 
+        public IEnumerable<KeyValuePair<Player, int>> ScoresPerPlayer
+        {
+            get
+            {
+                return this.Games.SelectMany(s => s.ScoresPerPlayer)
+                    .GroupBy(g => g.Key)
+                    .Select(g => new KeyValuePair<Player, int>(g.Key, g.Select(x => x.Value).Sum()))
+                    .OrderByDescending( s => s.Value);
+            }
+        }
+
         public Round(params Clazz[] classes)
         {
             this.Classes = classes;

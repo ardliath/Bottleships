@@ -85,7 +85,7 @@ namespace Bottleships.Logic
             return coords;
         }
 
-        public void RegisterDamage(Coordinates coordinates)
+        public DamageResult RegisterDamage(Coordinates coordinates)
         {
             if (this.IsAfloat)
             {
@@ -94,11 +94,21 @@ namespace Bottleships.Logic
                 {
                     if (shipPosition.Equals(coordinates) && !shipPosition.IsDamaged)
                     {
-                        this.DamageIndicies.Add(shipPosition.PositionIndex);
+                        this.DamageIndicies.Add(shipPosition.PositionIndex);                        
                     }
                 }
 
                 IsAfloat = this.Class.Size > this.DamageIndicies.Count();
+                if (!IsAfloat)
+                {
+                    return DamageResult.Sank;
+                }
+
+                return DamageResult.Hit;
+            }
+            else
+            {
+                return DamageResult.None;
             }
         }
     }
