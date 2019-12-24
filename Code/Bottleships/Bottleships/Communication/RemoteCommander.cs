@@ -57,5 +57,10 @@ namespace Bottleships.Communication
         {
             var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "shotresult", results);
         }
+
+        public void StartGame(GameStartNotification gameStartNotification)
+        {
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "startgame", gameStartNotification);
+        }
     }
 }

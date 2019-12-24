@@ -152,6 +152,7 @@ namespace Bottleships
             var gameFleets = new List<Fleet>();
             foreach (var player in this.CurrentGame.Players)
             {
+                player.StartGame(CurrentGame);
                 var fleet = player.GetFleet(this.Event.CurrentRound.Classes);
                 gameFleets.Add(fleet);
             }

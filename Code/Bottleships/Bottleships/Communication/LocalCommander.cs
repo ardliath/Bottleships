@@ -35,5 +35,10 @@ namespace Bottleships.Communication
         {
             Captain.RespondToShots(results);
         }
+
+        public void StartGame(GameStartNotification gameStartNotification)
+        {
+            Captain.StartGameNotification(gameStartNotification);
+        }
     }
 }

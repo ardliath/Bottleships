@@ -62,5 +62,14 @@ namespace Bottleships.Logic
         {
             this.Commander.RespondToShots(results);
         }
+
+        public void StartGame(Game currentGame)
+        {
+            this.Commander.StartGame(new GameStartNotification
+            {
+                NumberOfPlayers = currentGame.Players.Count(),
+                PlayerNames = currentGame.Players.Select(p => p.Name)
+            });
+        }
     }
 }

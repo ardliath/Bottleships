@@ -15,6 +15,8 @@ namespace Bottleships.AI
             return "Random Captain";
         }
 
+
+
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)
         {
             var placements = new List<Placement>();
@@ -62,6 +64,11 @@ namespace Bottleships.AI
         }
 
         public void RespondToShots(IEnumerable<ShotResult> results)
+        {
+            
+        }
+
+        public void StartGameNotification(GameStartNotification gameStartNotification)
         {
             
         }

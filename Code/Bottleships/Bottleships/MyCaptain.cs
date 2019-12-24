@@ -61,5 +61,10 @@ namespace Bottleships
         {
             
         }
+
+        public void StartGameNotification(GameStartNotification gameStartNotification)
+        {
+            
+        }
     }
 }

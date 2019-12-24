@@ -12,7 +12,12 @@ namespace Bottleships.AI
     {
         public SimpleCaptain()
         {
-            this.ShotHistory = new List<Shot>(); // TODO: I need to remember that when we play multiple games in a round this must be reset!
+            
+        }
+
+        public void StartGameNotification(GameStartNotification gameStartNotification)
+        {
+            this.ShotHistory = new List<Shot>();
         }
 
 

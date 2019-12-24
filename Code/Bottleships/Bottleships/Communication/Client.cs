@@ -99,7 +99,22 @@ namespace Bottleships.Communication
                 {
                     sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
                 }
-            }            
+            }
+
+            if (method.Equals("startgame"))
+            {
+                var data = JsonConvert.DeserializeObject<GameStartNotification>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+
+                _myCaptain.StartGameNotification(data);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+            }
         }
 
         public void EndGame()

@@ -13,5 +13,6 @@ namespace Bottleships.Communication
         IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes);
         IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots);
         void RespondToShots(IEnumerable<ShotResult> results);
+        void StartGameNotification(GameStartNotification gameStartNotification);
     }
 }
