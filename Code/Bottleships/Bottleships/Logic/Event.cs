@@ -34,51 +34,17 @@ namespace Bottleships.Logic
             var simplePlayer = new Player(new LocalCommander(new SimpleCaptain()));
             var randomPlayer = new Player(new LocalCommander(new RandomCaptain()));
 
-            var classes = new Clazz[]
-            {
-                                Clazz.AircraftCarrier,
-                                Clazz.Battleship,
-                                Clazz.Frigate,
-                                Clazz.Gunboat,
-                                Clazz.Submarine
-            };
-            var playerFleet = player1.GetFleet(classes);
-            var simpleFleet = simplePlayer.GetFleet(classes);
-            var randomFleet = randomPlayer.GetFleet(classes);
-
             return new Event
             {
                 Rounds = new Round[]
                 {
-                    new Round
+                    new Round(Clazz.AllClasses.ToArray())
                     {
                         Games = new Game[]
                         {
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    playerFleet,
-                                                    simpleFleet
-                               }
-                            },
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    playerFleet,
-                                                    randomFleet
-                               }
-                            },                        
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    playerFleet,
-                                                    simpleFleet,
-                                                    randomFleet
-                               }
-                            }
+                            new Game(player1, simplePlayer),
+                            new Game(player1, randomPlayer),
+                            new Game(player1, simplePlayer, randomPlayer)
                         }
                     }
                 }
@@ -91,64 +57,20 @@ namespace Bottleships.Logic
             var player2 = new Player(new LocalCommander(new SimpleCaptain()));
             var player3 = new Player(new LocalCommander(new RandomCaptain()));
 
-            var classes = new Clazz[]
-            {
-                Clazz.AircraftCarrier,
-                Clazz.Battleship,
-                Clazz.Frigate,
-                Clazz.Gunboat,
-                Clazz.Submarine
-            };
-            var fleet1 = player1.GetFleet(classes);
-            var fleet2 = player2.GetFleet(classes);
-            var fleet3 = player3.GetFleet(classes);
-
-            var game = new Game
-            {
-                Fleets = new Fleet[]
-                {
-                   fleet1,
-                   fleet2,
-                   fleet3
-                }
-            };
-
             return new Event
             {
                 Rounds = new Round[]
-                            {
-                    new Round
+                {
+                    new Round(Clazz.AllClasses.ToArray())
                     {
                         Games = new Game[]
                         {
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    fleet1,
-                                                    fleet2
-                               }
-                            },
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    fleet1,
-                                                    fleet2
-                               }
-                            },
-                            new Game
-                            {
-                                Fleets = new Fleet[]
-                               {
-                                                    fleet1,
-                                                    fleet2,
-                                                    fleet3
-                               }
-                            }
+                            new Game(player1, player2),
+                            new Game(player1, player3),
+                            new Game(player1, player2, player3)
                         }
                     }
-                            }
+                }
             };
         }
     }

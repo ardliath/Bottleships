@@ -28,7 +28,13 @@ namespace Bottleships.Logic
 
         public IEnumerable<Fleet> Fleets { get; set; }
 
+        public Game(params Player[] players)
+        {
+            this.Players = players;
+        }
+
         public IEnumerable<Shot> CurrentPlayersShots { get; set; }
+        public IEnumerable<Player> Players { get; private set; }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()
         {

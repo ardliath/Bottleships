@@ -10,22 +10,34 @@ namespace Bottleships.Logic
     {
         public IEnumerable<Game> Games { get; set; }
 
-        protected int GameIndex { get; set; }
+        public IEnumerable<Clazz> Classes { get; set; }
+
+        public Round(params Clazz[] classes)
+        {
+            this.Classes = classes;
+        }
+
+        protected int? GameIndex { get; set; }
 
         public Game CurrentGame
         {
             get
             {
-                return this.Games.ElementAt(this.GameIndex);
+                return this.GameIndex.HasValue
+                    ? this.Games.ElementAt(this.GameIndex.Value)
+                    : null;
             }
         }
 
         public void MoveOntoNextGame()
         {
-            this.GameIndex++;
-            foreach (var fleet in this.CurrentGame.Fleets)
+            if (this.GameIndex.HasValue)
             {
-                fleet.ResetFleet();
+                this.GameIndex++;
+            }
+            else
+            {
+                this.GameIndex = 0;
             }
         }
     }

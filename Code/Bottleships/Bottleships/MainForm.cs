@@ -111,7 +111,7 @@ namespace Bottleships
                     this.DrawOverrideMessageScreen();
                 }
 
-                if (RemainingTicksToDisplayOverrideMessage.HasValue) // decrememt the counter
+                if (RemainingTicksToDisplayOverrideMessage.HasValue) // decrement the counter
                 {
                     RemainingTicksToDisplayOverrideMessage--;
                     if(RemainingTicksToDisplayOverrideMessage <=0)
@@ -128,14 +128,9 @@ namespace Bottleships
             {
                 if (this.CurrentGame.GameOver // if the game has ended
                     && this.GameViewInformation.ShotImpactScreensToShow == 0) // and we don't have to see any more shots landing
-                {                    
-                    OverrideMessage = this.CurrentGame.Winner == null // then show the winner's message
-                        ? "Draw!"
-                        : $"{this.CurrentGame.Winner.Player.Name} wins!";
-                    RemainingTicksToDisplayOverrideMessage = 3;
-                    
-                    this.Event.CurrentRound.MoveOntoNextGame();
-                    this.GameViewInformation = new GameViewInformation(this.CurrentGame);
+                {
+                    this.EndGame();
+                    this.StartNextGame();
                 }
                 return;
             }
@@ -147,6 +142,28 @@ namespace Bottleships
             }
 
             this.DrawMenu();
+        }
+
+        private void StartNextGame()
+        {
+            this.Event.CurrentRound.MoveOntoNextGame();
+            this.GameViewInformation = new GameViewInformation(this.CurrentGame);
+
+            var gameFleets = new List<Fleet>();
+            foreach (var player in this.CurrentGame.Players)
+            {
+                var fleet = player.GetFleet(this.Event.CurrentRound.Classes);
+                gameFleets.Add(fleet);
+            }
+            this.CurrentGame.Fleets = gameFleets;
+        }
+
+        private void EndGame()
+        {
+            OverrideMessage = this.CurrentGame.Winner == null // then show the winner's message
+                ? "Draw!"
+                : $"{this.CurrentGame.Winner.Player.Name} wins!";
+            RemainingTicksToDisplayOverrideMessage = 3;
         }
 
         private void DrawMenu()
@@ -361,8 +378,8 @@ namespace Bottleships
                     switch (SelectedMenuIndex)
                     {
                         case 0: // start a remote game
-                            this.Event = Event.CreateEventSchedule(this.Server.ConnectedPlayers);
-                            this.GameViewInformation = new GameViewInformation(this.CurrentGame);
+                            this.Event = Event.CreateEventSchedule(this.Server.ConnectedPlayers);                            
+                            this.StartNextGame();
 
                             this.Timer.Interval = TurnTickInterval;
                             this.OverrideMessage = "Starting Hosted Game";
@@ -401,7 +418,7 @@ namespace Bottleships
                             this.OverrideMessage = null;
 
                             this.Event = Event.CreateLocalGame();
-                            this.GameViewInformation = new GameViewInformation(this.CurrentGame);
+                            this.StartNextGame();
                             this.Timer.Interval = TurnTickInterval;
                             this.Timer.Start();
                                                         
