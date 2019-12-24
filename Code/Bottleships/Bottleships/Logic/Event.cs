@@ -12,19 +12,27 @@ namespace Bottleships.Logic
     {
         public IEnumerable<Round> Rounds { get; set; }
 
+        protected int RoundIndex { get; set; }
+
         public Round CurrentRound
         {
             get
             {
-                return this.Rounds.Single();
+                return this.Rounds.ElementAt(this.RoundIndex);
             }
+        }
+
+        public void MoveOntoNextRound()
+        {
+            this.RoundIndex++;
         }
 
         public static Event CreateEventSchedule(IEnumerable<ConnectedPlayer> connectedPlayers)
         {
-            if(connectedPlayers.Count() > 1) throw new NotImplementedException("Not implemented for multiple players");
+            if (connectedPlayers.Count() > 1) throw new NotImplementedException("Not implemented for multiple players");
             var player1 = new Player(new RemoteCommander(connectedPlayers.Single()));
-            var aiPlayer = new Player(new LocalCommander(new SimpleCaptain()));
+            var simplePlayer = new Player(new LocalCommander(new SimpleCaptain()));
+            var randomPlayer = new Player(new LocalCommander(new RandomCaptain()));
 
             var classes = new Clazz[]
             {
@@ -34,19 +42,47 @@ namespace Bottleships.Logic
                                 Clazz.Gunboat,
                                 Clazz.Submarine
             };
-            var fleet1 = player1.GetFleet(classes);
-            var fleet2 = aiPlayer.GetFleet(classes);
+            var playerFleet = player1.GetFleet(classes);
+            var simpleFleet = simplePlayer.GetFleet(classes);
+            var randomFleet = randomPlayer.GetFleet(classes);
 
-            var game = new Game
+            return new Event
             {
-                Fleets = new Fleet[]
-               {
-                                    fleet1,
-                                    fleet2
-               }
+                Rounds = new Round[]
+                {
+                    new Round
+                    {
+                        Games = new Game[]
+                        {
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    playerFleet,
+                                                    simpleFleet
+                               }
+                            },
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    playerFleet,
+                                                    randomFleet
+                               }
+                            },                        
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    playerFleet,
+                                                    simpleFleet,
+                                                    randomFleet
+                               }
+                            }
+                        }
+                    }
+                }
             };
-
-            return CreateEventFromSingleGame(game);
         }
 
         public static Event CreateLocalGame()
@@ -77,23 +113,42 @@ namespace Bottleships.Logic
                 }
             };
 
-            return CreateEventFromSingleGame(game);
-        }
-
-        private static Event CreateEventFromSingleGame(Game game)
-        {
             return new Event
             {
                 Rounds = new Round[]
-                {
+                            {
                     new Round
                     {
                         Games = new Game[]
                         {
-                            game
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    fleet1,
+                                                    fleet2
+                               }
+                            },
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    fleet1,
+                                                    fleet2
+                               }
+                            },
+                            new Game
+                            {
+                                Fleets = new Fleet[]
+                               {
+                                                    fleet1,
+                                                    fleet2,
+                                                    fleet3
+                               }
+                            }
                         }
                     }
-                }
+                            }
             };
         }
     }

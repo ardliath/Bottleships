@@ -32,6 +32,8 @@ namespace Bottleships
 
         public Timer Timer { get; set; }
 
+        public const int TurnTickInterval = 250;
+
         public int ScrollingXPos = 0;
 
         public int SelectedMenuIndex = 0;        
@@ -398,7 +400,7 @@ namespace Bottleships
                             this.Event = Event.CreateEventSchedule(this.Server.ConnectedPlayers);
                             this.GameViewInformation = new GameViewInformation(this.CurrentGame);
 
-                            this.Timer.Interval = 3000;
+                            this.Timer.Interval = TurnTickInterval;
                             this.OverrideMessage = "Starting Hosted Game";
                             this.DrawOverrideMessageScreen();
                             this.OverrideMessage = null;
@@ -436,7 +438,7 @@ namespace Bottleships
 
                             this.Event = Event.CreateLocalGame();
                             this.GameViewInformation = new GameViewInformation(this.CurrentGame);
-                            this.Timer.Interval = 3000;
+                            this.Timer.Interval = TurnTickInterval;
                             this.Timer.Start();
                                                         
                             break;

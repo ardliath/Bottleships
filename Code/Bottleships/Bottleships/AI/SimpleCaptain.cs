@@ -67,35 +67,40 @@ namespace Bottleships.AI
         public List<Shot> ShotHistory { get; set; }
 
         public IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots)
-        {            
-            var shots = new List<Shot>();
-            var rand = new Random(Guid.NewGuid().GetHashCode());
-            for (int i = 0; i < numberOfShots;  i++)
+        {
+            var shots = GetShotsNotTaken(enemyFleetInfo)
+                .OrderBy(s => Guid.NewGuid().GetHashCode())
+                .Take(numberOfShots);
+
+            this.ShotHistory.AddRange(shots);
+
+            return shots;
+        }
+
+        public IEnumerable<Shot> GetShotsNotTaken(IEnumerable<EnemyFleetInfo> enemyFleetInfo)
+        {
+            var allShots = new List<Shot>();
+            foreach(var enemy in enemyFleetInfo)
             {
-                int x = rand.Next(0, 9);
-                int y = rand.Next(0, 9);
-
-                var newCoord = new Coordinates { X = x, Y = y };
-                var enemy = enemyFleetInfo.ElementAt(rand.Next(enemyFleetInfo.Count()));
-
-                var shot = new Shot
+                for(int x = 0; x < 10; x++)
                 {
-                    Coordinates = newCoord,
-                    FleetName = enemy.Name
-                };
-
-                if(ShotHistory.Contains(shot))
-                {
-                    i--;
-                }
-                else
-                {
-                    ShotHistory.Add(shot);
-                    shots.Add(shot);
+                    for (int y = 0; y < 10; y++)
+                    {
+                        allShots.Add(new Shot
+                        {
+                            Coordinates = new Coordinates
+                            {
+                                X = x,
+                                Y = y
+                            },
+                            FleetName = enemy.Name
+                        });
+                    }
                 }
             }
 
-            return shots;
+
+            return allShots.Except(this.ShotHistory);
         }
 
         public void RespondToShots(IEnumerable<ShotResult> results)

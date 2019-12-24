@@ -10,17 +10,19 @@ namespace Bottleships.Logic
     {
         public IEnumerable<Game> Games { get; set; }
 
+        protected int GameIndex { get; set; }
+
         public Game CurrentGame
         {
             get
             {
-                return this.Games.Single();
+                return this.Games.ElementAt(this.GameIndex);
             }
         }
 
         public void MoveOntoNextGame()
         {
-            //this.CurrentGame = null; // TODO: this needs to expand to support more games see issue #18
+            this.GameIndex++;
         }
     }
 }
