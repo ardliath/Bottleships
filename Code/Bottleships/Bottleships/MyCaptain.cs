@@ -66,5 +66,10 @@ namespace Bottleships
         {
             
         }
+
+        public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
+        {
+
+        }
     }
 }

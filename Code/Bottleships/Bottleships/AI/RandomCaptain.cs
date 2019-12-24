@@ -63,6 +63,11 @@ namespace Bottleships.AI
             return shots;
         }
 
+        public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
+        {
+            
+        }
+
         public void RespondToShots(IEnumerable<ShotResult> results)
         {
             

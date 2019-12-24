@@ -71,5 +71,10 @@ namespace Bottleships.Logic
                 PlayerNames = currentGame.Players.Select(p => p.Name)
             });
         }
+
+        public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
+        {
+            this.Commander.NotifyOfBeingHit(hits);
+        }
     }
 }

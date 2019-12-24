@@ -355,13 +355,14 @@ namespace Bottleships
         {
             this.CurrentGame.CurrentPlayersShots = this.CurrentGame.PlayerWhosTurnItIs.Player.GetShots(this.CurrentGame, this.CurrentGame.PlayerWhosTurnItIs);
             var results = new List<ShotResult>();
+            var hitNotifications = new Dictionary<Player, List<HitNotification>>();
 
             foreach (var shot in this.CurrentGame.CurrentPlayersShots)
-            {
-                var fleet = this.CurrentGame.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
-                if (fleet != null)
+            {                
+                var fleetBeingShotAt = this.CurrentGame.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
+                if (fleetBeingShotAt != null)
                 {
-                    var result = fleet.ResolveShot(shot);
+                    var result = fleetBeingShotAt.ResolveShot(shot);
                     results.Add(result);
                     if(result.WasAHit)
                     {
@@ -370,10 +371,27 @@ namespace Bottleships
                             Player = this.CurrentGame.PlayerWhosTurnItIs.Player,
                             Score = result.WasASink ? Scores.Sink : Scores.Hit
                         });
+
+
+                        if (!hitNotifications.ContainsKey(fleetBeingShotAt.Player))
+                        {
+                            hitNotifications.Add(fleetBeingShotAt.Player, new List<HitNotification>());
+                        }
+                        hitNotifications[fleetBeingShotAt.Player].Add(new HitNotification
+                        {
+                            Shooter = this.CurrentGame.PlayerWhosTurnItIs.Player.Name,
+                            WasASink = result.WasASink,
+                            Coordinates = shot.Coordinates,
+                            ClassHit = result.Class
+                        });
                     }
                 }
             }
 
+            foreach(var playersHit in hitNotifications)
+            {
+                playersHit.Key.NotifyOfBeingHit(playersHit.Value);
+            }
             this.CurrentGame.PlayerWhosTurnItIs.Player.RespondToShots(results);
         }
 

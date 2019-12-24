@@ -32,12 +32,12 @@ namespace Bottleships.Logic
                     if(shipSpace.Equals(shot.Coordinates))
                     {
                         var damageResult = ship.RegisterDamage(shot.Coordinates);
-                        return new ShotResult(shot, true, damageResult == DamageResult.Sank);
+                        return new ShotResult(shot, ship.Class, true, damageResult == DamageResult.Sank);
                     }
                 }
             }
 
-            return new ShotResult(shot, false, false);
+            return new ShotResult(shot, null, false, false);
         }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()

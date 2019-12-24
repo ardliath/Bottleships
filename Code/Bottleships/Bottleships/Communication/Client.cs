@@ -115,6 +115,22 @@ namespace Bottleships.Communication
                     sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
                 }
             }
+
+            if (method.Equals("hitnotification"))
+            {
+                var data = JsonConvert.DeserializeObject<IEnumerable<HitNotification>>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+
+                _myCaptain.NotifyOfBeingHit(data);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+            }            
+
         }
 
         public void EndGame()

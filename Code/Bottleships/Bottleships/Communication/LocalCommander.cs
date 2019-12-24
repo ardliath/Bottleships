@@ -31,6 +31,11 @@ namespace Bottleships.Communication
             return Captain.GetShots(enemyFleetInfo, numberOfShots);
         }
 
+        public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
+        {
+            this.Captain.NotifyOfBeingHit(hits);
+        }
+
         public void RespondToShots(IEnumerable<ShotResult> results)
         {
             Captain.RespondToShots(results);
