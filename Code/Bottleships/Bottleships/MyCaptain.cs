@@ -10,9 +10,16 @@ namespace Bottleships
 {
     public class MyCaptain : ICaptain
     {
+        public string Name { get; set; }
+
         public string GetName()
         {
-            return "MyCaptain";
+            return this.Name;
+        }
+
+        public MyCaptain()
+        {
+            this.Name = "MyCaptain";
         }
 
         public IEnumerable<Placement> GetPlacements(IEnumerable<Clazz> classes)

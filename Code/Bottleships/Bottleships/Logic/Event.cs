@@ -40,10 +40,15 @@ namespace Bottleships.Logic
 
         public static Event CreateEventSchedule(IEnumerable<ConnectedPlayer> connectedPlayers)
         {
-            if (connectedPlayers.Count() > 1) throw new NotImplementedException("Not implemented for multiple players");
-            var player1 = new Player(new RemoteCommander(connectedPlayers.Single()));
-            var simplePlayer = new Player(new LocalCommander(new SimpleCaptain()));
-            var randomPlayer = new Player(new LocalCommander(new RandomCaptain()));
+            var remotePlayers = connectedPlayers.Select(cp => new Player(new RemoteCommander(cp)));
+            var houseRobots = new Player[]
+                {
+                    new Player(new LocalCommander(new SimpleCaptain())),
+                    new Player(new LocalCommander(new RandomCaptain()))
+                };
+
+            var allplayers = remotePlayers.Union(houseRobots);
+            var pairedGames = CreateGamesForPlayerPairs(allplayers);
 
             return new Event
             {
@@ -51,15 +56,39 @@ namespace Bottleships.Logic
                 {
                     new Round(Clazz.AllClasses.ToArray())
                     {
+                        Games = pairedGames
+                    },
+                    new Round(Clazz.AllClasses.ToArray())
+                    {
                         Games = new Game[]
                         {
-                            new Game(player1, simplePlayer),
-                            new Game(player1, randomPlayer),
-                            new Game(player1, simplePlayer, randomPlayer)
+                            new Game(allplayers.ToArray())
                         }
                     }
                 }
             };
+        }
+
+        private static IEnumerable<Game> CreateGamesForPlayerPairs(IEnumerable<Player> players)
+        {
+
+            var games = new List<Game>();
+
+            for (int i = 0; i < players.Count(); i++)
+            {
+                for (int j = 0; j < players.Count(); j++)
+                {
+                    if (j >= i) continue;
+
+                    games.Add(new Game(new Player[]
+                    {
+                        players.ElementAt(i),
+                        players.ElementAt(j)
+                    }));
+                }
+            }
+
+            return games;
         }
 
         public static Event CreateLocalGame()
