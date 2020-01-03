@@ -19,6 +19,10 @@ With very basic graphics
 
 ![Botleships Screenshot](/Screenshots/Firing.png)
 
+And a distinctly "retro" [menu feel](https://github.com/ardliath/Bottleships/issues/12)
+
+![Botleships Screenshot](/Screenshots/Menu.png)
+
 Functionally it's there, but there are lots of UI and playability improvements which need to be made. I'm hoping to run this event in Q1 (or maybe Q2) and so hope to have a working version developed by then.
 
 ### What's Different about Bottleships to traditional Battleships?
