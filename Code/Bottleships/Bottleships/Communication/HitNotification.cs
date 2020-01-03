@@ -14,6 +14,7 @@ namespace Bottleships.Communication
         public Coordinates Coordinates { get; set; }
 
         public bool WasASink { get; set; }
+        public bool WasAHit { get; set; }
 
         public Clazz ClassHit { get; set; }
     }

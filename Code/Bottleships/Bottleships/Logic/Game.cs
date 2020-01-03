@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bottleships.Communication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +48,7 @@ namespace Bottleships.Logic
             this.Scores = new List<ScoreAwarded>();
         }
 
-        public IEnumerable<Shot> CurrentPlayersShots { get; set; }
+        public Dictionary<Player, List<HitNotification>> CurrentPlayersShots { get; set; }
         public IEnumerable<Player> Players { get; private set; }
 
         public void SinkShipsWhichCollideOrFallOutOfBounds()

@@ -253,14 +253,24 @@ namespace Bottleships
             {
                 gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
 
+                foreach (var ship in fleet.Ships.Where(s => s.IsAfloat))
+                {
+                    DrawShip(gfx, ship, xBuffer, yBuffer);
+                }
+
                 if (this.CurrentGame.CurrentPlayersShots != null)
                 {
-                    foreach (var lastTurnShot in this.CurrentGame.CurrentPlayersShots)
+                    var shotsAtThisPlayer = this.CurrentGame.CurrentPlayersShots.ContainsKey(fleet.Player)
+                        ? this.CurrentGame.CurrentPlayersShots[fleet.Player]
+                        : new List<HitNotification>();
+
+                    foreach (var lastTurnShot in shotsAtThisPlayer)
                     {
-                        if (fleet.Player.Name.Equals(lastTurnShot.FleetName))
-                        {
-                            gfx.FillRectangle(Brushes.DarkBlue, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
-                        }
+                        var colour = lastTurnShot.WasAHit
+                            ? Brushes.Red
+                            : Brushes.DarkBlue;
+
+                        gfx.FillRectangle(colour, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
                     }
                 }
 
@@ -268,11 +278,6 @@ namespace Bottleships
                 {
                     gfx.DrawLine(Pens.Black, new Point(xBuffer, (i * 51) + yBuffer), new Point(this.pictureBox1.Width - xBuffer, (i * 51) + yBuffer));  // horizontal
                     gfx.DrawLine(Pens.Black, new Point((i * 51) + xBuffer, yBuffer), new Point((i * 51) + xBuffer, this.pictureBox1.Height - yBuffer)); // vertical
-                }
-
-                foreach (var ship in fleet.Ships.Where(s => s.IsAfloat))
-                {
-                    DrawShip(gfx, ship, xBuffer, yBuffer);
                 }
 
 
@@ -307,7 +312,7 @@ namespace Bottleships
             {
                 var brush = Brushes.Gray;
                 if (coords.IsCentre) brush = Brushes.Black;
-                if (coords.IsDamaged) brush = Brushes.Red;
+                if (coords.IsDamaged) brush = Brushes.Orange;
 
                 gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
             }
@@ -341,7 +346,7 @@ namespace Bottleships
             int i = 0;
             foreach (var fleet in this.CurrentGame.Fleets)
             {
-                if (this.CurrentGame.CurrentPlayersShots.Any(s => s.FleetName.Equals(fleet.Player.Name, StringComparison.CurrentCultureIgnoreCase)))
+                if (this.CurrentGame.CurrentPlayersShots.ContainsKey(fleet.Player))
                 {
                     fleetsBeingShotAt.Add(i);
                 }
@@ -353,36 +358,49 @@ namespace Bottleships
 
         private void DoTurn()
         {
-            this.CurrentGame.CurrentPlayersShots = this.CurrentGame.PlayerWhosTurnItIs.Player.GetShots(this.CurrentGame, this.CurrentGame.PlayerWhosTurnItIs);
+            var shots = this.CurrentGame.PlayerWhosTurnItIs.Player.GetShots(this.CurrentGame, this.CurrentGame.PlayerWhosTurnItIs);
             var results = new List<ShotResult>();
             var hitNotifications = new Dictionary<Player, List<HitNotification>>();
 
-            foreach (var shot in this.CurrentGame.CurrentPlayersShots)
+            foreach (var shot in shots)
             {                
                 var fleetBeingShotAt = this.CurrentGame.Fleets.SingleOrDefault(f => f.Player.Name.Equals(shot.FleetName));
                 if (fleetBeingShotAt != null)
                 {
                     var result = fleetBeingShotAt.ResolveShot(shot);
                     results.Add(result);
-                    if(result.WasAHit)
+
+                    if (!hitNotifications.ContainsKey(fleetBeingShotAt.Player))
+                    {
+                        hitNotifications.Add(fleetBeingShotAt.Player, new List<HitNotification>());
+                    }
+
+                    if (result.WasAHit)
                     {
                         this.CurrentGame.Scores.Add(new ScoreAwarded
                         {
                             Player = this.CurrentGame.PlayerWhosTurnItIs.Player,
                             Score = result.WasASink ? Scores.Sink : Scores.Hit
-                        });
+                        });                        
 
-
-                        if (!hitNotifications.ContainsKey(fleetBeingShotAt.Player))
-                        {
-                            hitNotifications.Add(fleetBeingShotAt.Player, new List<HitNotification>());
-                        }
                         hitNotifications[fleetBeingShotAt.Player].Add(new HitNotification
                         {
                             Shooter = this.CurrentGame.PlayerWhosTurnItIs.Player.Name,
                             WasASink = result.WasASink,
                             Coordinates = shot.Coordinates,
-                            ClassHit = result.Class
+                            ClassHit = result.Class,
+                            WasAHit = true
+                        });
+                    }
+                    else // record the miss
+                    {
+                        hitNotifications[fleetBeingShotAt.Player].Add(new HitNotification
+                        {
+                            Shooter = this.CurrentGame.PlayerWhosTurnItIs.Player.Name,
+                            WasASink = false,
+                            Coordinates = shot.Coordinates,
+                            ClassHit = null,
+                            WasAHit = false
                         });
                     }
                 }
@@ -390,8 +408,10 @@ namespace Bottleships
 
             foreach(var playersHit in hitNotifications)
             {
-                playersHit.Key.NotifyOfBeingHit(playersHit.Value);
+                playersHit.Key.NotifyOfBeingHit(playersHit.Value.Where(h => h.WasAHit));
             }
+
+            this.CurrentGame.CurrentPlayersShots = hitNotifications;
             this.CurrentGame.PlayerWhosTurnItIs.Player.RespondToShots(results);
         }
 
