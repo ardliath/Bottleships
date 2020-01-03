@@ -24,7 +24,7 @@ namespace Bottleships.Logic
 
         public ShotResult ResolveShot(Shot shot)
         {
-            foreach(var ship in Ships)
+            foreach(var ship in Ships.Where(s => s.IsAfloat))
             {
                 var squares = ship.GetSquares();
                 foreach(var shipSpace in squares)
