@@ -15,7 +15,11 @@ The game is very much in the early versions:
 
 ![Botleships Screenshot](/Screenshots/VeryEarlyVersion.png)
 
-Functionally it's there, but there are LOTS of UI and playability improvements which need to be made. I'm hoping to run this event in Q1 (or maybe Q2) and so hope to have a working version developed by then.
+With very basic graphics
+
+![Botleships Screenshot](/Screenshots/Firing.png)
+
+Functionally it's there, but there are lots of UI and playability improvements which need to be made. I'm hoping to run this event in Q1 (or maybe Q2) and so hope to have a working version developed by then.
 
 ### What's Different about Bottleships to traditional Battleships?
 There are a few tweaks to make the game more interesting and harder for our teams:
