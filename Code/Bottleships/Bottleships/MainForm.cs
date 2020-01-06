@@ -249,13 +249,14 @@ namespace Bottleships
             var xBuffer = (this.pictureBox1.Width - gameSize) / 2;
             var yBuffer = (this.pictureBox1.Height - gameSize) / 2;
 
+            var shipPainter = new ShipPainter(xBuffer, yBuffer);
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
                 gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
 
                 foreach (var ship in fleet.Ships.Where(s => s.IsAfloat))
                 {
-                    DrawShip(gfx, ship, xBuffer, yBuffer);
+                    shipPainter.DrawShip(gfx, ship);
                 }
 
                 if (this.CurrentGame.CurrentPlayersShots != null)
@@ -303,19 +304,6 @@ namespace Bottleships
             return this.GameViewInformation.ViewPhase == ViewPhase.Aiming
                 ? $"{currentPlayer} is taking aim..."
                 : $"{fleetBeingViewed} is taking fire from {currentPlayer}";
-        }
-
-        private void DrawShip(Graphics gfx, Ship ship, int xBuffer, int yBuffer)
-        {
-            var shipSquares = ship.GetSquares();
-            foreach (var coords in shipSquares)
-            {
-                var brush = Brushes.Gray;
-                if (coords.IsCentre) brush = Brushes.Black;
-                if (coords.IsDamaged) brush = Brushes.Orange;
-
-                gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
-            }
         }
 
         public delegate void UpdateScreenDelegate(Bitmap bitmap);
