@@ -25,6 +25,7 @@ namespace Bottleships.UI
         {
             if (ship.Class.Equals(Clazz.Gunboat))
             {
+                // Part of me wonders whether I should bother with this or if we should just construct the ship dynamically with front/back sections...
                 //Bitmap shipBitmap = GetBitmapResource("Gunboat");
                 //if (shipBitmap != null)
                 //{
