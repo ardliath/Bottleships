@@ -22,21 +22,18 @@ namespace Bottleships.Logic
             this.DamageIndicies = new List<int>();
         }
 
-        public IEnumerable<Square> GetSquares()
+        private void GetBackOfBoat(out Coordinates backOfBoat, out int xOffset, out int yOffset)
         {
-            var coords = new List<Square>();
-            
             var isOdd = this.Class.Size % 2 == 1;
             var halfRoundedDown = (this.Class.Size - (isOdd ? 1 : 0)) / 2;
 
             var backOfBoatOffset = halfRoundedDown;
             var frontOfBoatOffset = halfRoundedDown + (isOdd ? 0 : -1);
+            yOffset = 0;
+            xOffset = 0;
 
-            int xOffset = 0;
-            int yOffset = 0;
-            Coordinates backOfBoat;
 
-            switch(Direction)
+            switch (Direction)
             {
                 case Direction.Up:
                     yOffset = -1;
@@ -48,11 +45,11 @@ namespace Bottleships.Logic
                     backOfBoat = new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y - backOfBoatOffset };
                     break;
                 case Direction.Left:
-                    backOfBoat = new Coordinates { X = this.Coordinates.X + backOfBoatOffset, Y = this.Coordinates.Y};
+                    backOfBoat = new Coordinates { X = this.Coordinates.X + backOfBoatOffset, Y = this.Coordinates.Y };
                     xOffset = -1;
                     break;
                 case Direction.Right:
-                    backOfBoat = new Coordinates { X = this.Coordinates.X - backOfBoatOffset, Y = this.Coordinates.Y};
+                    backOfBoat = new Coordinates { X = this.Coordinates.X - backOfBoatOffset, Y = this.Coordinates.Y };
                     xOffset = 1;
                     break;
 
@@ -60,6 +57,12 @@ namespace Bottleships.Logic
                     backOfBoat = new Coordinates { X = this.Coordinates.X, Y = this.Coordinates.Y };
                     break;
             }
+        }
+
+        public IEnumerable<Square> GetSquares()
+        {
+            var coords = new List<Square>();
+            GetBackOfBoat(out Coordinates backOfBoat, out int xOffset, out int yOffset);
 
             for(int i = 0; i < this.Class.Size; i++)
             {
@@ -83,6 +86,31 @@ namespace Bottleships.Logic
             
 
             return coords;
+        }
+
+        public Coordinates BackOfBoat
+        {
+            get
+            {
+                GetBackOfBoat(out Coordinates backOfBoat, out int xOffset, out int yOffset);
+                return backOfBoat;
+            }
+        }
+
+        public Coordinates FrontOfBoat
+        {
+            get
+            {
+                GetBackOfBoat(out Coordinates backOfBoat, out int xOffset, out int yOffset);
+
+                var frontOfBoat = new Coordinates
+                {
+                    X = backOfBoat.X + (Class.Size * xOffset),
+                    Y = backOfBoat.Y + (Class.Size * yOffset),
+                };
+                    
+                return frontOfBoat;
+            }
         }
 
         public DamageResult RegisterDamage(Coordinates coordinates)
