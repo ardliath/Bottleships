@@ -271,7 +271,7 @@ namespace Bottleships
                             ? Brushes.Red
                             : Brushes.DarkBlue;
 
-                        gfx.FillRectangle(colour, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
+                        gfx.FillEllipse(colour, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
                     }
                 }
 

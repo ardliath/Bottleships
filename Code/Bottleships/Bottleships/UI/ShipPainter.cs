@@ -52,10 +52,13 @@ namespace Bottleships.UI
                 foreach (var coords in shipSquares)
                 {
                     var brush = Brushes.Gray;
-                    if (coords.IsCentre) brush = Brushes.Black;
-                    if (coords.IsDamaged) brush = Brushes.Orange;
-
                     gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+
+                    if (coords.IsDamaged)
+                    {
+                        brush = Brushes.Orange;
+                        gfx.FillEllipse(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                    }
                 }
             }
         }
