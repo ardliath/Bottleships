@@ -9,8 +9,8 @@ namespace Bottleships.Logic
     public class Clazz
     {
         public static Clazz AircraftCarrier = new Clazz("Aircraft Carrier", 5);
-        public static Clazz Battleship = new Clazz("Battleship", 4);
-        public static Clazz Frigate = new Clazz("Frigate", 3);
+        public static Clazz Battleship = new Clazz("Battleship", 4) { HasChimneys = true };
+        public static Clazz Frigate = new Clazz("Frigate", 3) { HasChimneys = true };
         public static Clazz Submarine = new Clazz("Submarine", 3);
         public static Clazz Gunboat = new Clazz("Gunboat", 2);
 
@@ -32,6 +32,7 @@ namespace Bottleships.Logic
 
         public string Name { get; set; }
         public int Size { get; set; }
+        public bool HasChimneys { get; set; }
 
         public Clazz() // for serialising only
         {

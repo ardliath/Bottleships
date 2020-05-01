@@ -23,45 +23,109 @@ namespace Bottleships.UI
 
         public void DrawShip(Graphics gfx, Ship ship)
         {
-            if (ship.Class.Equals(Clazz.Gunboat))
+            var shipSquares = ship.GetSquares();
+            foreach (var coords in shipSquares)
             {
-                // Part of me wonders whether I should bother with this or if we should just construct the ship dynamically with front/back sections...
-                //Bitmap shipBitmap = GetBitmapResource("Gunboat");
-                //if (shipBitmap != null)
-                //{
-                //    shipBitmap.MakeTransparent(Color.FromArgb(255, 174, 201));
-
-                //    var point = new Point(xBuffer + (ship.FrontOfBoat.X * 51), yBuffer + (ship.FrontOfBoat.Y * 51));
-                //    gfx.DrawImage(shipBitmap, point);
-                //}
-
-                var shipSquares = ship.GetSquares();
-                foreach (var coords in shipSquares)
+                var brush = Brushes.Gray;
+                if (coords.Equals(shipSquares.First()))
                 {
-                    var brush = Brushes.Gray;
+                    DrawProw(gfx, ship.Class, ship.Direction, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                }
+                else if (coords.Equals(shipSquares.Last()))
+                {
+                    DrawStern(gfx, ship.Class, ship.Direction, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));                    
+                }
+                else
+                {
                     gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
-                    if (coords.IsDamaged)
+                    if(ship.Class.HasChimneys)
                     {
-                        brush = Brushes.Orange;
-                        gfx.FillEllipse(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                        gfx.FillEllipse(Brushes.DarkGray, new Rectangle(1 + xBuffer + (coords.X * 51) + 10, 1 + yBuffer + (coords.Y * 51) + 10, 30, 30));
+                        gfx.DrawEllipse(Pens.Black, new Rectangle(1 + xBuffer + (coords.X * 51) + 10, 1 + yBuffer + (coords.Y * 51) + 10, 30, 30));
                     }
                 }
-            }
-            else
-            {
-                var shipSquares = ship.GetSquares();
-                foreach (var coords in shipSquares)
-                {
-                    var brush = Brushes.Gray;
-                    gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
 
-                    if (coords.IsDamaged)
-                    {
-                        brush = Brushes.Orange;
-                        gfx.FillEllipse(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
-                    }
+                if (coords.IsDamaged)
+                {
+                    brush = Brushes.Orange;
+                    gfx.FillEllipse(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
                 }
             }
+        }
+
+        private void DrawProw(Graphics gfx, Clazz clazz, Direction direction, Rectangle rectangle)
+        {
+
+            var prowBitmap = new Bitmap(50, 50);
+            using (var prowGfx = Graphics.FromImage(prowBitmap))
+            {                
+                prowGfx.FillPolygon(Brushes.Gray, new Point[]
+                {
+                    new Point(0, 0),
+                    new Point(25, 25),
+                    new Point(50, 0),
+                });
+
+                RotateFlipType? flip;
+                switch(direction)
+                {
+                    case Direction.Down:
+                        flip = RotateFlipType.RotateNoneFlipY;
+                        break;
+                    case Direction.Left:
+                        flip = RotateFlipType.Rotate270FlipNone;
+                        break;
+                    case Direction.Right:
+                        flip = RotateFlipType.Rotate90FlipNone;
+                        break;
+                    default:
+                        flip = null;
+                        break;
+                }
+                if (flip.HasValue)
+                {
+                    prowBitmap.RotateFlip(flip.Value);
+                }
+            }
+            gfx.DrawImage(prowBitmap, rectangle);
+        }
+
+        private void DrawStern(Graphics gfx, Clazz clazz, Direction direction, Rectangle rectangle)
+        {
+
+            var prowBitmap = new Bitmap(50, 50);
+            using (var prowGfx = Graphics.FromImage(prowBitmap))
+            {
+                prowGfx.FillPolygon(Brushes.Gray, new Point[]
+                {
+                    new Point(0, 0),
+                    new Point(5, 35),
+                    new Point(45, 35),
+                    new Point(50, 0),
+                });
+
+                RotateFlipType? flip;
+                switch (direction)
+                {
+                    case Direction.Up:
+                        flip = RotateFlipType.RotateNoneFlipY;
+                        break;
+                    case Direction.Right:
+                        flip = RotateFlipType.Rotate270FlipNone;
+                        break;
+                    case Direction.Left:
+                        flip = RotateFlipType.Rotate90FlipNone;
+                        break;
+                    default:
+                        flip = null;
+                        break;
+                }
+                if (flip.HasValue)
+                {
+                    prowBitmap.RotateFlip(flip.Value);
+                }
+            }
+            gfx.DrawImage(prowBitmap, rectangle);
         }
 
         private static Bitmap GetBitmapResource(string name)
