@@ -252,7 +252,7 @@ namespace Bottleships
 
                     if (this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
                     {
-                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (yBuffer * 275), 274, 275));
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 274, 274));
                     }
 
                     i++;
