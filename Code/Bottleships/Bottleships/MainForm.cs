@@ -30,7 +30,7 @@ namespace Bottleships
 
         public Timer Timer { get; set; }
 
-        public const int TurnTickInterval = 250;
+        public const int TurnTickInterval = 500;
 
         public int ScrollingXPos = 0;
 
@@ -238,6 +238,11 @@ namespace Bottleships
                         new Rectangle(i * 275, 0, 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
+
+                    if(this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
+                    {                        
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(i * 275, 0, 274, 275));
+                    }
                 }
 
                 i++;
@@ -288,11 +293,11 @@ namespace Bottleships
                 StringFormat format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
                 format.Alignment = StringAlignment.Center;
-                gfx.DrawString(GetTitleText(),
-                    new Font(FontFamily.GenericMonospace, 22),
-                    Brushes.Black,
-                    new RectangleF(0, 0, width, height),
-                    format);
+                //gfx.DrawString(GetTitleText(),
+                //    new Font(FontFamily.GenericMonospace, 22),
+                //    Brushes.Black,
+                //    new RectangleF(0, 0, width, height),
+                //    format);
 
             }
 
@@ -306,12 +311,6 @@ namespace Bottleships
             image.MakeTransparent(transparent);
 
             gfx.DrawImage(image, new Point(lastTurnShotCoorinates.X * 51, lastTurnShotCoorinates.Y * 51));
-        }
-
-        private string GetTitleText()
-        {
-            var currentPlayer = this.CurrentGame.PlayerWhosTurnItIs.Player.Name;            
-            return $"{currentPlayer} is taking aim...";
         }
 
         public delegate void UpdateScreenDelegate(Bitmap bitmap);
