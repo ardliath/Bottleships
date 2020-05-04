@@ -12,13 +12,8 @@ namespace Bottleships.UI
 {
     public class ShipPainter
     {
-        private int xBuffer;
-        private int yBuffer;
-
-        public ShipPainter(int xBuffer, int yBuffer)
+        public ShipPainter()
         {
-            this.xBuffer = xBuffer;
-            this.yBuffer = yBuffer;
         }
 
         public void DrawShip(Graphics gfx, Ship ship)
@@ -29,19 +24,19 @@ namespace Bottleships.UI
                 var brush = Brushes.Gray;
                 if (coords.Equals(shipSquares.First()))
                 {
-                    DrawProw(gfx, ship.Class, ship.Direction, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                    DrawProw(gfx, ship.Class, ship.Direction, new Rectangle(1 + (coords.X * 51), 1 + (coords.Y * 51), 50, 50));
                 }
                 else if (coords.Equals(shipSquares.Last()))
                 {
-                    DrawStern(gfx, ship.Class, ship.Direction, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));                    
+                    DrawStern(gfx, ship.Class, ship.Direction, new Rectangle(1 + (coords.X * 51), 1 + (coords.Y * 51), 50, 50));                    
                 }
                 else
                 {
-                    gfx.FillRectangle(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                    gfx.FillRectangle(brush, new Rectangle(1 + (coords.X * 51), 1 + (coords.Y * 51), 50, 50));
                     if(ship.Class.HasChimneys)
                     {
-                        gfx.FillEllipse(Brushes.DarkGray, new Rectangle(1 + xBuffer + (coords.X * 51) + 10, 1 + yBuffer + (coords.Y * 51) + 10, 30, 30));
-                        gfx.DrawEllipse(Pens.Black, new Rectangle(1 + xBuffer + (coords.X * 51) + 10, 1 + yBuffer + (coords.Y * 51) + 10, 30, 30));
+                        gfx.FillEllipse(Brushes.DarkGray, new Rectangle(1 + (coords.X * 51) + 10, 1 + (coords.Y * 51) + 10, 30, 30));
+                        gfx.DrawEllipse(Pens.Black, new Rectangle(1 + (coords.X * 51) + 10, 1 + (coords.Y * 51) + 10, 30, 30));
                     }
                 }
 
@@ -50,7 +45,7 @@ namespace Bottleships.UI
                     var image = ShipPainter.GetBitmapResource("Damage");
                     image.MakeTransparent(Color.White);
 
-                    gfx.DrawImage(image, new Point(xBuffer + (coords.X * 51), yBuffer + (coords.Y * 51)));
+                    gfx.DrawImage(image, new Point((coords.X * 51), (coords.Y * 51)));
                 }
             }
         }
