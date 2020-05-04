@@ -250,6 +250,20 @@ namespace Bottleships
             var yBuffer = (this.pictureBox1.Height - gameSize) / 2;
 
             var shipPainter = new ShipPainter(xBuffer, yBuffer);
+
+            var fleetScreen = DrawFleetScreen(fleet, shipPainter, this.pictureBox1.Width, pictureBox1.Height, xBuffer, yBuffer);
+            using (var gfx = Graphics.FromImage(bitmap))
+            {
+                gfx.DrawImage(fleetScreen, 0, 0);
+            }
+
+            this.UpdateScreen(bitmap);
+        }
+
+        public Bitmap DrawFleetScreen(Fleet fleet, ShipPainter shipPainter, int x, int y, int xBuffer, int yBuffer)
+        {
+            var bitmap = new Bitmap(x, y);
+
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
                 gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
@@ -287,7 +301,7 @@ namespace Bottleships
 
                 StringFormat format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
-                format.Alignment = StringAlignment.Center;                
+                format.Alignment = StringAlignment.Center;
                 gfx.DrawString(GetTitleText(),
                     new Font(FontFamily.GenericMonospace, 22),
                     Brushes.Black,
@@ -295,9 +309,8 @@ namespace Bottleships
                     format);
 
             }
-            
 
-            this.UpdateScreen(bitmap);
+            return bitmap;
         }
 
         
