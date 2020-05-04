@@ -228,6 +228,10 @@ namespace Bottleships
             
             var shipPainter = new ShipPainter();
 
+            bool twoRows = this.CurrentGame.Players.Count() > 3;
+            int playersWidth = twoRows ? 3 * 275 : this.CurrentGame.Players.Count() * 275;
+            int xBuffer = (this.pictureBox1.Width - playersWidth) / 2;
+
             int i = 0;
             int x = 0;
             int y = 0;
@@ -239,13 +243,13 @@ namespace Bottleships
                     GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
 
                     gfx.DrawImage(fleetScreen,
-                        new Rectangle(x * 275, y * 275, 275, 275),
+                        new Rectangle(xBuffer + (x * 275), y * 275, 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
 
                     if(this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
                     {                        
-                        gfx.DrawRectangle(Pens.Red, new Rectangle(x * 275, y * 275, 274, 275));
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), y * 275, 274, 275));
                     }
                 }
 
