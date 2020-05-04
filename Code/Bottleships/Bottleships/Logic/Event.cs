@@ -108,12 +108,12 @@ namespace Bottleships.Logic
                     {
                         Games = new Game[]
                         {
+                            new Game(player1, player2, player3, player4, player5),
+                            new Game(player1, player2, player3, player4, player6),
                             new Game(player1, player2),
                             new Game(player1, player3),
                             new Game(player1, player2, player3),
-                            new Game(player1, player2, player3, player4),
-                            new Game(player1, player2, player3, player4, player5),
-                            new Game(player1, player2, player3, player4, player6)
+                            new Game(player1, player2, player3, player4),                            
                         }
                     }
                 }

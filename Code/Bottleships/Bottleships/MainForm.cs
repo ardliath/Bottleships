@@ -231,29 +231,32 @@ namespace Bottleships
             bool twoRows = this.CurrentGame.Players.Count() > 3;
             int playersWidth = twoRows ? 3 * 275 : this.CurrentGame.Players.Count() * 275;
             int xBuffer = (this.pictureBox1.Width - playersWidth) / 2;
+            int yBuffer = 100;
 
             int i = 0;
             int x = 0;
             int y = 0;
-            foreach (var fleet in this.CurrentGame.Fleets)
+            using (var gfx = Graphics.FromImage(bitmap))
             {
-                var fleetScreen = DrawFleetScreen(fleet, shipPainter, 550, 550);
-                using (var gfx = Graphics.FromImage(bitmap))
+                gfx.FillRectangle(Brushes.Aqua, 0, 0, this.pictureBox1.Width, this.pictureBox1.Height);
+                foreach (var fleet in this.CurrentGame.Fleets)
                 {
+                    var fleetScreen = DrawFleetScreen(fleet, shipPainter, 550, 550);
+
                     GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
 
                     gfx.DrawImage(fleetScreen,
-                        new Rectangle(xBuffer + (x * 275), y * 275, 275, 275),
+                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
 
-                    if(this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
-                    {                        
-                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), y * 275, 274, 275));
+                    if (this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
+                    {
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (yBuffer * 275), 274, 275));
                     }
-                }
 
-                i++;
+                    i++;
+                }
             }
 
             this.UpdateScreen(bitmap);
