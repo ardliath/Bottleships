@@ -229,19 +229,23 @@ namespace Bottleships
             var shipPainter = new ShipPainter();
 
             int i = 0;
+            int x = 0;
+            int y = 0;
             foreach (var fleet in this.CurrentGame.Fleets)
             {
                 var fleetScreen = DrawFleetScreen(fleet, shipPainter, 550, 550);
                 using (var gfx = Graphics.FromImage(bitmap))
                 {
+                    GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
+
                     gfx.DrawImage(fleetScreen,
-                        new Rectangle(i * 275, 0, 275, 275),
+                        new Rectangle(x * 275, y * 275, 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
 
                     if(this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
                     {                        
-                        gfx.DrawRectangle(Pens.Red, new Rectangle(i * 275, 0, 274, 275));
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(x * 275, y * 275, 274, 275));
                     }
                 }
 
@@ -249,6 +253,20 @@ namespace Bottleships
             }
 
             this.UpdateScreen(bitmap);
+        }
+
+        private void GetCoords(int fleetIndex, int fleetCount, out int x, out int y)
+        {
+            if (fleetCount <= 3)
+            {
+                y = 0;
+                x = fleetIndex;
+            }
+            else
+            {
+                y = fleetIndex < 3 ? 0 : 1;
+                x = y == 1 ? fleetIndex - 3 : fleetIndex;
+            }
         }
 
         public Bitmap DrawFleetScreen(Fleet fleet, ShipPainter shipPainter, int width, int height)
