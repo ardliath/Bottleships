@@ -267,11 +267,14 @@ namespace Bottleships
 
                     foreach (var lastTurnShot in shotsAtThisPlayer)
                     {
-                        var colour = lastTurnShot.WasAHit
-                            ? Brushes.Red
-                            : Brushes.DarkBlue;
-
-                        gfx.FillEllipse(colour, new RectangleF(xBuffer + (lastTurnShot.Coordinates.X * 51), yBuffer + (lastTurnShot.Coordinates.Y * 51), 50, 50));
+                        if (lastTurnShot.WasAHit)
+                        {
+                            DrawSomething(gfx, lastTurnShot.Coordinates, xBuffer, yBuffer, "Explosion", Color.Black);
+                        }
+                        else
+                        {
+                            DrawSomething(gfx, lastTurnShot.Coordinates, xBuffer, yBuffer, "Splash", Color.FromArgb(13, 27, 39));
+                        }
                     }
                 }
 
@@ -292,9 +295,18 @@ namespace Bottleships
                     format);
 
             }
-
+            
 
             this.UpdateScreen(bitmap);
+        }
+
+        
+        protected void DrawSomething(Graphics gfx, Coordinates lastTurnShotCoorinates, int xBuffer, int yBuffer, string what, Color transparent)
+        {
+            var image = ShipPainter.GetBitmapResource(what);
+            image.MakeTransparent(transparent);
+
+            gfx.DrawImage(image, new Point(xBuffer + (lastTurnShotCoorinates.X * 51), yBuffer + (lastTurnShotCoorinates.Y * 51)));
         }
 
         private string GetTitleText()

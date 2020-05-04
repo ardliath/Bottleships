@@ -47,8 +47,10 @@ namespace Bottleships.UI
 
                 if (coords.IsDamaged)
                 {
-                    brush = Brushes.Orange;
-                    gfx.FillEllipse(brush, new Rectangle(1 + xBuffer + (coords.X * 51), 1 + yBuffer + (coords.Y * 51), 50, 50));
+                    var image = ShipPainter.GetBitmapResource("Damage");
+                    image.MakeTransparent(Color.White);
+
+                    gfx.DrawImage(image, new Point(xBuffer + (coords.X * 51), yBuffer + (coords.Y * 51)));
                 }
             }
         }
@@ -128,7 +130,7 @@ namespace Bottleships.UI
             gfx.DrawImage(prowBitmap, rectangle);
         }
 
-        private static Bitmap GetBitmapResource(string name)
+        public static Bitmap GetBitmapResource(string name)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string strBaseName = assembly.GetName().Name + ".Properties.Resources";
