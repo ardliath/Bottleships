@@ -96,6 +96,9 @@ namespace Bottleships.Logic
             var player1 = new Player(new LocalCommander(new MyCaptain()));
             var player2 = new Player(new LocalCommander(new SimpleCaptain()));
             var player3 = new Player(new LocalCommander(new RandomCaptain()));
+            var player4 = new Player(new LocalCommander(new RandomCaptain()));
+            var player5 = new Player(new LocalCommander(new RandomCaptain()));
+            var player6 = new Player(new LocalCommander(new RandomCaptain()));
 
             return new Event
             {
@@ -105,9 +108,12 @@ namespace Bottleships.Logic
                     {
                         Games = new Game[]
                         {
+                            new Game(player1, player2, player3, player4, player5),
+                            new Game(player1, player2, player3, player4, player6),
                             new Game(player1, player2),
                             new Game(player1, player3),
-                            new Game(player1, player2, player3)
+                            new Game(player1, player2, player3),
+                            new Game(player1, player2, player3, player4),                            
                         }
                     }
                 }

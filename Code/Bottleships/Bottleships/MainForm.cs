@@ -19,8 +19,6 @@ namespace Bottleships
 {
     public partial class MainForm : Form
     {
-        public GameViewInformation GameViewInformation { get; set; }
-
         public Event Event { get; set; }        
 
         public Client Client { get; set; }
@@ -32,7 +30,7 @@ namespace Bottleships
 
         public Timer Timer { get; set; }
 
-        public const int TurnTickInterval = 250;
+        public const int TurnTickInterval = 500;
 
         public int ScrollingXPos = 0;
 
@@ -69,30 +67,21 @@ namespace Bottleships
             if(ScrollingXPos <= -200) ScrollingXPos = this.pictureBox1.Width;
             ScrollingXPos -= 2;
 
-            if (this.CurrentGame != null
-                && (!this.CurrentGame.GameOver
-                || this.GameViewInformation.ShotImpactScreensToShow > 0))
+            if (this.CurrentGame != null)
             {
-                // Not all ticks are turns, the player takes a turn and then we have ticks which show the explosions
-                var isTurn = this.GameViewInformation.ViewPhase == ViewPhase.Aiming;
-
-                if (isTurn)
-                {
+                
                     this.DoPreTurn();
                     this.DoTurn();
                     this.DrawGameScreen();
                     this.DoPostTurn();
+
+                if (this.CurrentGame.Winner == null)
+                {
+                    this.CurrentGame.MoveTurnOntoNextPlayer();
                 }
                 else
                 {
-                    if (this.GameViewInformation.MoveOntoNextExplosion())
-                    {
-                        this.DrawGameScreen();
-                    }
-                    else
-                    { 
-                        this.CurrentGame.MoveTurnOntoNextPlayer();
-                    }
+                    this.StartNextGame();
                 }
             }
             else // if we're ticking but not in a game then just show the regular refresh screen
@@ -126,8 +115,7 @@ namespace Bottleships
 
             if(this.CurrentGame != null)
             {
-                if (this.CurrentGame.GameOver // if the game has ended
-                    && this.GameViewInformation.ShotImpactScreensToShow == 0) // and we don't have to see any more shots landing
+                if (this.CurrentGame.GameOver)
                 {
                     this.EndGame();
                     this.StartNextGame();
@@ -147,7 +135,6 @@ namespace Bottleships
         private void StartNextGame()
         {
             this.Event.CurrentRound.MoveOntoNextGame();
-            this.GameViewInformation = new GameViewInformation(this.CurrentGame);
 
             var gameFleets = new List<Fleet>();
             foreach (var player in this.CurrentGame.Players)
@@ -236,37 +223,66 @@ namespace Bottleships
         }
 
         public void DrawGameScreen()
-        {            
-            var fleet = this.GameViewInformation.GetFleetToView();
-            this.DrawGameScreen(fleet);
-        }
-
-        public void DrawGameScreen(Fleet fleet)
         {
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
+            
+            var shipPainter = new ShipPainter();
 
-            var gameSize = (50 * 10) + 8;
-            var xBuffer = (this.pictureBox1.Width - gameSize) / 2;
-            var yBuffer = (this.pictureBox1.Height - gameSize) / 2;
+            bool twoRows = this.CurrentGame.Players.Count() > 3;
+            int playersWidth = twoRows ? 3 * 275 : this.CurrentGame.Players.Count() * 275;
+            int xBuffer = (this.pictureBox1.Width - playersWidth) / 2;
+            int yBuffer = 100;
 
-            var shipPainter = new ShipPainter(xBuffer, yBuffer);
-
-            var fleetScreen = DrawFleetScreen(fleet, shipPainter, this.pictureBox1.Width, pictureBox1.Height, xBuffer, yBuffer);
+            int i = 0;
+            int x = 0;
+            int y = 0;
             using (var gfx = Graphics.FromImage(bitmap))
             {
-                gfx.DrawImage(fleetScreen, 0, 0);
+                gfx.FillRectangle(Brushes.Aqua, 0, 0, this.pictureBox1.Width, this.pictureBox1.Height);
+                foreach (var fleet in this.CurrentGame.Fleets)
+                {
+                    var fleetScreen = DrawFleetScreen(fleet, shipPainter, 550, 550);
+
+                    GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
+
+                    gfx.DrawImage(fleetScreen,
+                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 275, 275),
+                        new Rectangle(0, 0, 550, 550),
+                        GraphicsUnit.Pixel);
+
+                    if (this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
+                    {
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 274, 274));
+                    }
+
+                    i++;
+                }
             }
 
             this.UpdateScreen(bitmap);
         }
 
-        public Bitmap DrawFleetScreen(Fleet fleet, ShipPainter shipPainter, int x, int y, int xBuffer, int yBuffer)
+        private void GetCoords(int fleetIndex, int fleetCount, out int x, out int y)
         {
-            var bitmap = new Bitmap(x, y);
+            if (fleetCount <= 3)
+            {
+                y = 0;
+                x = fleetIndex;
+            }
+            else
+            {
+                y = fleetIndex < 3 ? 0 : 1;
+                x = y == 1 ? fleetIndex - 3 : fleetIndex;
+            }
+        }
+
+        public Bitmap DrawFleetScreen(Fleet fleet, ShipPainter shipPainter, int width, int height)
+        {
+            var bitmap = new Bitmap(width, height);
 
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
-                gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
+                gfx.FillRectangle(Brushes.Aqua, new RectangleF(0, 0, width, height));
 
                 foreach (var ship in fleet.Ships.Where(s => s.IsAfloat))
                 {
@@ -283,30 +299,30 @@ namespace Bottleships
                     {
                         if (lastTurnShot.WasAHit)
                         {
-                            DrawSomething(gfx, lastTurnShot.Coordinates, xBuffer, yBuffer, "Explosion", Color.Black);
+                            DrawSomething(gfx, lastTurnShot.Coordinates, "Explosion", Color.Black);
                         }
                         else
                         {
-                            DrawSomething(gfx, lastTurnShot.Coordinates, xBuffer, yBuffer, "Splash", Color.FromArgb(13, 27, 39));
+                            DrawSomething(gfx, lastTurnShot.Coordinates, "Splash", Color.FromArgb(13, 27, 39));
                         }
                     }
                 }
 
                 for (int i = 1; i < 10; i++)
                 {
-                    gfx.DrawLine(Pens.Black, new Point(xBuffer, (i * 51) + yBuffer), new Point(this.pictureBox1.Width - xBuffer, (i * 51) + yBuffer));  // horizontal
-                    gfx.DrawLine(Pens.Black, new Point((i * 51) + xBuffer, yBuffer), new Point((i * 51) + xBuffer, this.pictureBox1.Height - yBuffer)); // vertical
+                    gfx.DrawLine(Pens.Black, new Point(0, (i * 51) ), new Point(this.pictureBox1.Width, (i * 51)));  // horizontal
+                    gfx.DrawLine(Pens.Black, new Point((i * 51), 0), new Point((i * 51), this.pictureBox1.Height)); // vertical
                 }
 
 
                 StringFormat format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
                 format.Alignment = StringAlignment.Center;
-                gfx.DrawString(GetTitleText(),
-                    new Font(FontFamily.GenericMonospace, 22),
-                    Brushes.Black,
-                    new RectangleF(0, 0, this.pictureBox1.Width, yBuffer),
-                    format);
+                //gfx.DrawString(GetTitleText(),
+                //    new Font(FontFamily.GenericMonospace, 22),
+                //    Brushes.Black,
+                //    new RectangleF(0, 0, width, height),
+                //    format);
 
             }
 
@@ -314,21 +330,12 @@ namespace Bottleships
         }
 
         
-        protected void DrawSomething(Graphics gfx, Coordinates lastTurnShotCoorinates, int xBuffer, int yBuffer, string what, Color transparent)
+        protected void DrawSomething(Graphics gfx, Coordinates lastTurnShotCoorinates, string what, Color transparent)
         {
             var image = ShipPainter.GetBitmapResource(what);
             image.MakeTransparent(transparent);
 
-            gfx.DrawImage(image, new Point(xBuffer + (lastTurnShotCoorinates.X * 51), yBuffer + (lastTurnShotCoorinates.Y * 51)));
-        }
-
-        private string GetTitleText()
-        {
-            var currentPlayer = this.CurrentGame.PlayerWhosTurnItIs.Player.Name;
-            var fleetBeingViewed = this.GameViewInformation.GetFleetToView().Player.Name;
-            return this.GameViewInformation.ViewPhase == ViewPhase.Aiming
-                ? $"{currentPlayer} is taking aim..."
-                : $"{fleetBeingViewed} is taking fire from {currentPlayer}";
+            gfx.DrawImage(image, new Point(lastTurnShotCoorinates.X * 51, lastTurnShotCoorinates.Y * 51));
         }
 
         public delegate void UpdateScreenDelegate(Bitmap bitmap);
@@ -365,7 +372,6 @@ namespace Bottleships
                 }
                 i++;
             }
-            this.GameViewInformation.StartShowingExplosions(fleetsBeingShotAt);
         }
 
 

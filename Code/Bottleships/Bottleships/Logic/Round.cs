@@ -10,6 +10,8 @@ namespace Bottleships.Logic
     {
         public IEnumerable<Game> Games { get; set; }
 
+        public bool RoundOver { get; set; }
+
         public IEnumerable<Clazz> Classes { get; set; }
 
         public IEnumerable<KeyValuePair<Player, int>> ScoresPerPlayer
@@ -43,8 +45,13 @@ namespace Bottleships.Logic
         public void MoveOntoNextGame()
         {
             if (this.GameIndex.HasValue)
-            {
+            {                
                 this.GameIndex++;
+                if (this.Games.Count() == this.GameIndex)
+                {
+                    this.GameIndex = null;
+                    this.RoundOver = true;
+                }
             }
             else
             {

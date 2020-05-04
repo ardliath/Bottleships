@@ -10,9 +10,16 @@ namespace Bottleships.AI
 {
     public class RandomCaptain : ICaptain
     {
+        private string _name;
+
+        public RandomCaptain()
+        {
+            this._name = $"Random {Guid.NewGuid().ToString()}";
+        }
+
         public string GetName()
         {
-            return "Random Captain";
+            return _name;
         }
 
 
