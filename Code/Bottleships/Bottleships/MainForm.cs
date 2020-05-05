@@ -230,12 +230,13 @@ namespace Bottleships
 
             bool twoRows = this.CurrentGame.Players.Count() > 3;
             int playersWidth = twoRows ? 3 * 275 : this.CurrentGame.Players.Count() * 275;
-            int xBuffer = (this.pictureBox1.Width - playersWidth) / 2;
+            int xBuffer = (this.pictureBox1.Width - playersWidth - 300) / 2;
             int yBuffer = 100;
 
             int i = 0;
             int x = 0;
             int y = 0;
+            StringFormat format;
             using (var gfx = Graphics.FromImage(bitmap))
             {
                 gfx.FillRectangle(Brushes.Aqua, 0, 0, this.pictureBox1.Width, this.pictureBox1.Height);
@@ -245,20 +246,23 @@ namespace Bottleships
 
                     GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
 
+                    // fleet board
                     gfx.DrawImage(fleetScreen,
                         new Rectangle(xBuffer + (x * 275), yBuffer + (y * (275 + 75)), 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
 
-                    StringFormat format = new StringFormat();
+                    // ship's names
+                    format = new StringFormat();
                     format.LineAlignment = StringAlignment.Center;
                     format.Alignment = StringAlignment.Center;
                     gfx.DrawString(fleet.Player.Name,
                         new Font(FontFamily.GenericMonospace, 12),
                         Brushes.Black,
-                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * ( 275 + 75)) + 275, 275, 75),
+                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * (275 + 75)) + 275, 275, 75),
                         format);
 
+                    // red border
                     if (this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
                     {
                         gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (y * (275 + 75)), 274, 274));
@@ -266,6 +270,23 @@ namespace Bottleships
 
                     i++;
                 }
+
+                // scores
+                StringBuilder sb = new StringBuilder();
+                foreach(var score in this.CurrentGame.ScoresPerPlayer.OrderByDescending(s => s.Value))
+                {
+                    sb.AppendLine($"{score.Key.Name} - {score.Value}");
+                }
+                format = new StringFormat();
+                //format.LineAlignment = StringAlignment.Near;
+                //format.Alignment = StringAlignment.Near;
+                gfx.DrawString(sb.ToString(),
+                    new Font(FontFamily.GenericMonospace, 12),
+                    Brushes.Black,
+                    new Rectangle(this.pictureBox1.Width - 300, yBuffer, 300, this.pictureBox1.Height - yBuffer),
+                    format);
+
+                i++;
             }
 
             this.UpdateScreen(bitmap);
