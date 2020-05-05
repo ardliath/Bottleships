@@ -26,6 +26,8 @@ namespace Bottleships.AI
         public void StartGameNotification(GameStartNotification gameStartNotification)
         {
             this.ShotHistory = new List<Shot>();
+            this.SearchShots = null;
+            this.Finds = null;
         }
 
 
@@ -115,20 +117,28 @@ namespace Bottleships.AI
                 while (shotsToFire.Count < numberOfShots && find.UpcomingShots.Any())
                 {
                     var nextShot = find.UpcomingShots.Pop();
-                    shotsToFire.Add(nextShot);
+                    if (!ShotHistory.Contains(nextShot))
+                    {
+                        shotsToFire.Add(nextShot);
+                    }
                 }
             }
 
             // then fill up with searches
-            for (int i = shotsToFire.Count; i < numberOfShots; i++)
+            while (shotsToFire.Count < numberOfShots)
             {
                 if (SearchShots.ContainsKey(target)
                     && SearchShots[target].Any())
                 {
-                    shotsToFire.Add(SearchShots[target].Pop());
+                    var nextSearchingShot = SearchShots[target].Pop();
+                    if (!ShotHistory.Contains(nextSearchingShot))
+                    {
+                        shotsToFire.Add(nextSearchingShot);
+                    }
                 }
             }
 
+            ShotHistory.AddRange(shotsToFire);
             return shotsToFire;
         }
         private void CreateSearchShots(IEnumerable<EnemyFleetInfo> fleets)
@@ -164,6 +174,7 @@ namespace Bottleships.AI
         Dictionary<string, Stack<Shot>> SearchShots { get; set; }
 
         public List<Find> Finds { get; set; }
+        
 
 
 
