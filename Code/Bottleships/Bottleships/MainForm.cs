@@ -81,6 +81,7 @@ namespace Bottleships
                 }
                 else
                 {
+                    EndGame();
                     this.StartNextGame();
                 }
             }
