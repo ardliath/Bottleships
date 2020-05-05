@@ -85,7 +85,8 @@ namespace Bottleships.AI
         public IEnumerable<Shot> GetShotsNotTaken(IEnumerable<EnemyFleetInfo> enemyFleetInfo)
         {
             var allShots = new List<Shot>();
-            foreach(var enemy in enemyFleetInfo)
+            var fleetsToShootAt = enemyFleetInfo.Where(f => f.NumberOfAfloatShipts > 0);
+            foreach (var enemy in fleetsToShootAt)
             {
                 for(int x = 0; x < 10; x++)
                 {

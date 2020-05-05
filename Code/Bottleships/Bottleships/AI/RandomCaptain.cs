@@ -50,7 +50,10 @@ namespace Bottleships.AI
         {
             var rand = new Random();
             var shots = new List<Shot>();
-            var target = enemyFleetInfo.FirstOrDefault();
+            var target = enemyFleetInfo // target
+                .Where(f => f.NumberOfAfloatShipts > 0) // any enemy with ships afloat
+                .OrderBy(f => Guid.NewGuid()) // and pick a random one for all shots
+                .FirstOrDefault();
 
             for (int i = 0; i < numberOfShots; i++)
             {
