@@ -95,7 +95,7 @@ namespace Bottleships.Logic
         {
             var player1 = new Player(new LocalCommander(new MyCaptain()));
             var player2 = new Player(new LocalCommander(new SimpleCaptain()));
-            var player3 = new Player(new LocalCommander(new RandomCaptain()));
+            var player3 = new Player(new LocalCommander(new Nelson()));
             var player4 = new Player(new LocalCommander(new RandomCaptain()));
             var player5 = new Player(new LocalCommander(new RandomCaptain()));
             var player6 = new Player(new LocalCommander(new RandomCaptain()));
