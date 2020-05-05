@@ -246,13 +246,22 @@ namespace Bottleships
                     GetCoords(i, this.CurrentGame.Fleets.Count(), out x, out y);
 
                     gfx.DrawImage(fleetScreen,
-                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 275, 275),
+                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * (275 + 75)), 275, 275),
                         new Rectangle(0, 0, 550, 550),
                         GraphicsUnit.Pixel);
 
+                    StringFormat format = new StringFormat();
+                    format.LineAlignment = StringAlignment.Center;
+                    format.Alignment = StringAlignment.Center;
+                    gfx.DrawString(fleet.Player.Name,
+                        new Font(FontFamily.GenericMonospace, 12),
+                        Brushes.Black,
+                        new Rectangle(xBuffer + (x * 275), yBuffer + (y * ( 275 + 75)) + 275, 275, 75),
+                        format);
+
                     if (this.CurrentGame.PlayerWhosTurnItIs.Equals(fleet))
                     {
-                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (y * 275), 274, 274));
+                        gfx.DrawRectangle(Pens.Red, new Rectangle(xBuffer + (x * 275), yBuffer + (y * (275 + 75)), 274, 274));
                     }
 
                     i++;
@@ -315,9 +324,9 @@ namespace Bottleships
                 }
 
 
-                StringFormat format = new StringFormat();
-                format.LineAlignment = StringAlignment.Center;
-                format.Alignment = StringAlignment.Center;
+                //StringFormat format = new StringFormat();
+                //format.LineAlignment = StringAlignment.Center;
+                //format.Alignment = StringAlignment.Center;
                 //gfx.DrawString(GetTitleText(),
                 //    new Font(FontFamily.GenericMonospace, 22),
                 //    Brushes.Black,
