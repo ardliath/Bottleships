@@ -10,12 +10,15 @@
 
         public bool WasASink { get; set; }
 
-        public ShotResult(Shot shot, Clazz clazz, bool wasAHit, bool wasASink)
+        public bool WasFreshDamage { get; set; }
+
+        public ShotResult(Shot shot, Clazz clazz, bool wasAHit, bool wasASink, bool wasFreshDamage)
         {
             this.Shot = shot;
             this.Class = clazz;
             this.WasAHit = wasAHit;
             this.WasASink = wasASink;
+            this.WasFreshDamage = wasFreshDamage;
         }
     }
 }

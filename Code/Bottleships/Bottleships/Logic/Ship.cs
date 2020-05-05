@@ -13,6 +13,7 @@ namespace Bottleships.Logic
         public Clazz Class { get; set; }
 
         public List<int> DamageIndicies { get; set; }
+        public List<Coordinates> DamageCoordinates { get; set; }
 
         public bool IsAfloat { get; set; }
 
@@ -20,6 +21,7 @@ namespace Bottleships.Logic
         {
             this.IsAfloat = true;
             this.DamageIndicies = new List<int>();
+            this.DamageCoordinates = new List<Coordinates>();
         }
 
         private void GetBackOfBoat(out Coordinates backOfBoat, out int xOffset, out int yOffset)
@@ -122,7 +124,8 @@ namespace Bottleships.Logic
                 {
                     if (shipPosition.Equals(coordinates) && !shipPosition.IsDamaged)
                     {
-                        this.DamageIndicies.Add(shipPosition.PositionIndex);                        
+                        this.DamageIndicies.Add(shipPosition.PositionIndex);
+                        this.DamageCoordinates.Add(coordinates);
                     }
                 }
 

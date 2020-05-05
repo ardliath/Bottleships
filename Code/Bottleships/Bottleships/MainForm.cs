@@ -426,13 +426,16 @@ namespace Bottleships
 
                     if (result.WasAHit)
                     {
-                        this.CurrentGame.Scores.Add(new ScoreAwarded
+                        if (result.WasFreshDamage) // only award points for fresh damage
                         {
-                            Player = this.CurrentGame.PlayerWhosTurnItIs.Player,
-                            Score = result.WasASink ? Scores.Sink : Scores.Hit
-                        });                        
+                            this.CurrentGame.Scores.Add(new ScoreAwarded
+                            {
+                                Player = this.CurrentGame.PlayerWhosTurnItIs.Player,
+                                Score = result.WasASink ? Scores.Sink : Scores.Hit
+                            });
+                        }
 
-                        hitNotifications[fleetBeingShotAt.Player].Add(new HitNotification
+                        hitNotifications[fleetBeingShotAt.Player].Add(new HitNotification // but notify regardless
                         {
                             Shooter = this.CurrentGame.PlayerWhosTurnItIs.Player.Name,
                             WasASink = result.WasASink,
