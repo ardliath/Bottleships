@@ -117,7 +117,7 @@ namespace Bottleships.AI
                 while (shotsToFire.Count < numberOfShots && find.UpcomingShots.Any())
                 {
                     var nextShot = find.UpcomingShots.Pop();
-                    if (!ShotHistory.Contains(nextShot))
+                    if (!WouldShotBeAWaste(nextShot))
                     {
                         shotsToFire.Add(nextShot);
                     }
@@ -131,7 +131,7 @@ namespace Bottleships.AI
                     && SearchShots[target].Any())
                 {
                     var nextSearchingShot = SearchShots[target].Pop();
-                    if (!ShotHistory.Contains(nextSearchingShot))
+                    if (!WouldShotBeAWaste(nextSearchingShot))
                     {
                         shotsToFire.Add(nextSearchingShot);
                     }
@@ -141,6 +141,19 @@ namespace Bottleships.AI
             ShotHistory.AddRange(shotsToFire);
             return shotsToFire;
         }
+
+        private bool WouldShotBeAWaste(Shot shot)
+        {
+            if (ShotHistory.Contains(shot)) return true;
+
+            if (shot.Coordinates.X < 0) return true;
+            if (shot.Coordinates.X > 9) return true;
+            if (shot.Coordinates.Y < 0) return true;
+            if (shot.Coordinates.Y > 9) return true;
+
+            return false;
+        }
+
         private void CreateSearchShots(IEnumerable<EnemyFleetInfo> fleets)
         {
             SearchShots = new Dictionary<string, Stack<Shot>>();
