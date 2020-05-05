@@ -275,7 +275,7 @@ namespace Bottleships
                 StringBuilder sb = new StringBuilder();
                 foreach(var score in this.CurrentGame.ScoresPerPlayer.OrderByDescending(s => s.Value))
                 {
-                    sb.AppendLine($"{score.Key.Name} - {score.Value}");
+                    sb.AppendLine($"{score.Value} - {score.Key.Name}");
                 }
                 format = new StringFormat();
                 //format.LineAlignment = StringAlignment.Near;
