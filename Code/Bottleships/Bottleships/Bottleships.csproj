@@ -56,6 +56,8 @@
     <Compile Include="Communication\ClientUpdateEventArgs.cs" />
     <Compile Include="Communication\ConnectedPlayer.cs" />
     <Compile Include="Communication\EnemyFleetInfo.cs" />
+    <Compile Include="Communication\RoundEndNotification.cs" />
+    <Compile Include="Communication\GameEndNotification.cs" />
     <Compile Include="Communication\GameStartNotification.cs" />
     <Compile Include="Communication\HitNotification.cs" />
     <Compile Include="Communication\HttpListener.cs" />

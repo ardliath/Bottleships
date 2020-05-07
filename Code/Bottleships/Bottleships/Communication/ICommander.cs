@@ -14,6 +14,8 @@ namespace Bottleships.Communication
         IEnumerable<Shot> GetShots(IEnumerable<EnemyFleetInfo> enemyFleetInfo, int numberOfShots);
         void RespondToShots(IEnumerable<ShotResult> results);
         void StartGame(GameStartNotification gameStartNotification);
+        void EndGame(GameEndNotification gameEndNotification);
+        void EndRound(RoundEndNotification roundEndNotification);
         void NotifyOfBeingHit(IEnumerable<HitNotification> hits);
     }
 }

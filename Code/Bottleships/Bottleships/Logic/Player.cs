@@ -72,6 +72,21 @@ namespace Bottleships.Logic
             });
         }
 
+        public void EndGame(Game currentGame)
+        {
+            this.Commander.EndGame(new GameEndNotification
+            {
+            });
+        }
+
+
+        public void EndRound(Round currentRound)
+        {
+            this.Commander.EndRound(new RoundEndNotification
+            {
+            });
+        }
+
         public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
         {
             this.Commander.NotifyOfBeingHit(hits);

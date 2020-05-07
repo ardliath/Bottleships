@@ -87,5 +87,17 @@ namespace Bottleships.AI
         {
             
         }
+
+
+
+        public void EndGameNotification(GameEndNotification gameEndNotification)
+        {
+
+        }
+
+        public void EndRoundNotification(RoundEndNotification roundEndNotification)
+        {
+
+        }
     }
 }

@@ -116,6 +116,40 @@ namespace Bottleships.Communication
                 }
             }
 
+
+
+            if (method.Equals("endgame"))
+            {
+                var data = JsonConvert.DeserializeObject<GameEndNotification>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+
+                _myCaptain.EndGameNotification(data);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+            }
+
+
+
+            if (method.Equals("endround"))
+            {
+                var data = JsonConvert.DeserializeObject<RoundEndNotification>(body);
+
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.ContentType = "text/plain";
+
+                _myCaptain.EndRoundNotification(data);
+
+                using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
+                {
+                    sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+            }
+
             if (method.Equals("hitnotification"))
             {
                 var data = JsonConvert.DeserializeObject<IEnumerable<HitNotification>>(body);

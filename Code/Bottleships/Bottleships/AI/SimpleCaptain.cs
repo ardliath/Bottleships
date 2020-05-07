@@ -114,6 +114,18 @@ namespace Bottleships.AI
             // Doesn't care if we've hit something, not smart enough for that
         }
 
+
+
+        public void EndGameNotification(GameEndNotification gameEndNotification)
+        {
+
+        }
+
+        public void EndRoundNotification(RoundEndNotification roundEndNotification)
+        {
+
+        }
+
         public void NotifyOfBeingHit(IEnumerable<HitNotification> hits)
         {
 

@@ -16,6 +16,16 @@ namespace Bottleships.Communication
 
         public ICaptain Captain { get; private set; }
 
+        public void EndGame(GameEndNotification gameEndNotification)
+        {
+            this.Captain.EndGameNotification(gameEndNotification);
+        }
+
+        public void EndRound(RoundEndNotification roundEndNotification)
+        {
+            this.Captain.EndRoundNotification(roundEndNotification);
+        }
+
         public string GetName()
         {
             return Captain.GetName();

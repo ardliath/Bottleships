@@ -286,5 +286,15 @@ namespace Bottleships.AI
             // swap to shoot at whoever is shooting at me
             LastHittMe = hits.LastOrDefault()?.Shooter;
         }
+
+        public void EndGameNotification(GameEndNotification gameEndNotification)
+        {
+            
+        }
+
+        public void EndRoundNotification(RoundEndNotification roundEndNotification)
+        {
+            
+        }
     }
 }

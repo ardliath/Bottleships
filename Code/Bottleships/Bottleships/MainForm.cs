@@ -137,14 +137,24 @@ namespace Bottleships
         {
             this.Event.CurrentRound.MoveOntoNextGame();
 
-            var gameFleets = new List<Fleet>();
-            foreach (var player in this.CurrentGame.Players)
+            if (!this.Event.CurrentRound.RoundOver)
             {
-                player.StartGame(CurrentGame);
-                var fleet = player.GetFleet(this.Event.CurrentRound.Classes);
-                gameFleets.Add(fleet);
+                var gameFleets = new List<Fleet>();
+                foreach (var player in this.CurrentGame.Players)
+                {
+                    player.StartGame(CurrentGame);
+                    var fleet = player.GetFleet(this.Event.CurrentRound.Classes);
+                    gameFleets.Add(fleet);
+                }
+                this.CurrentGame.Fleets = gameFleets;
             }
-            this.CurrentGame.Fleets = gameFleets;
+            else
+            {
+                foreach (var player in this.Event.Players)
+                {
+                    player.EndRound(this.Event.CurrentRound);
+                }
+            }
         }
 
         private void EndGame()
@@ -159,6 +169,11 @@ namespace Bottleships
                 Player = this.CurrentGame.Winner.Player,
                 Score = Scores.WinningGame
             });
+
+            foreach (var player in this.CurrentGame.Players)
+            {
+                player.EndGame(this.CurrentGame);
+            }
         }
 
         private void DrawMenu()

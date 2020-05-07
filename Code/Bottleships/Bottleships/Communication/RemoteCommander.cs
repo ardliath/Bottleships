@@ -67,5 +67,15 @@ namespace Bottleships.Communication
         {
             var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "hitnotification", hits);
         }
+
+        public void EndGame(GameEndNotification gameEndNotification)
+        {
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "endgame", gameEndNotification);
+        }
+
+        public void EndRound(RoundEndNotification roundEndNotification)
+        {
+            var data = new HttpTransmitter().SendMessage(_connectedPlayer.Url, "endround", roundEndNotification);
+        }
     }
 }

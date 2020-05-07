@@ -33,6 +33,17 @@ namespace Bottleships.Logic
             }
         }
 
+        public IEnumerable<Player> Players
+        {
+            get
+            {
+                return this.Rounds
+                    .SelectMany(r => r.Games)
+                    .SelectMany(r => r.Players)
+                    .Distinct();
+            }
+        }
+
         public void MoveOntoNextRound()
         {
             this.RoundIndex++;
@@ -43,8 +54,8 @@ namespace Bottleships.Logic
             var remotePlayers = connectedPlayers.Select(cp => new Player(new RemoteCommander(cp)));
             var houseRobots = new Player[]
                 {
-                    new Player(new LocalCommander(new SimpleCaptain())),
-                    new Player(new LocalCommander(new RandomCaptain()))
+                    new Player(new LocalCommander(new Nelson())),
+                    //new Player(new LocalCommander(new RandomCaptain()))
                 };
 
             var allplayers = remotePlayers.Union(houseRobots);
@@ -112,9 +123,9 @@ namespace Bottleships.Logic
                             new Game(player1, player2, player3, player4, player5, player6),
                             new Game(player1, player2, player3, player4, player6),
                             new Game(player1, player2),
-                            
+
                             new Game(player1, player2, player3),
-                            new Game(player1, player2, player3, player4),                            
+                            new Game(player1, player2, player3, player4),
                         }
                     }
                 }
