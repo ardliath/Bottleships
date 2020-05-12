@@ -76,6 +76,7 @@ namespace Bottleships.Logic
         {
             this.Commander.EndGame(new GameEndNotification
             {
+                Scores = currentGame.ScoresPerPlayer
             });
         }
 
@@ -84,6 +85,7 @@ namespace Bottleships.Logic
         {
             this.Commander.EndRound(new RoundEndNotification
             {
+                Scores = currentRound.ScoresPerPlayer
             });
         }
 
