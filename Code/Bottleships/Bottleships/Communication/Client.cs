@@ -18,6 +18,10 @@ namespace Bottleships.Communication
 
         private HttpTransmitter _transmitter;
         private HttpListenerClass _listener;
+        
+        private static object _lock = new object();
+
+        public bool IsGameRunning { get; private set; }
 
         public Client(string serverUrl)
         {
@@ -27,12 +31,14 @@ namespace Bottleships.Communication
             _listener = new HttpListenerClass(3);
         }
 
-        public event EventHandler<ClientUpdateEventArgs> OnStatusUpdate;
-
         public void PlayGame()
         {
             _listener.Start(6999);
             _listener.ProcessRequest += HttpListener_ProcessRequest;
+            lock (_lock)
+            {
+                this.IsGameRunning = true;
+            }
         }
 
         private void HttpListener_ProcessRequest(System.Net.HttpListenerContext context)
@@ -109,6 +115,13 @@ namespace Bottleships.Communication
                 context.Response.ContentType = "text/plain";
 
                 _myCaptain.StartGameNotification(data);
+                if (!IsGameRunning)
+                {
+                    lock (_lock)
+                    {
+                        this.IsGameRunning = true;
+                    }
+                }
 
                 using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
                 {
@@ -147,6 +160,11 @@ namespace Bottleships.Communication
                 using (StreamWriter sw = new StreamWriter(context.Response.OutputStream))
                 {
                     sw.WriteLine(JsonConvert.SerializeObject(new { DataReceived = true }));
+                }
+
+                lock (_lock)
+                {
+                    this.IsGameRunning = false;
                 }
             }
 

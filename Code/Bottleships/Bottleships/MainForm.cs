@@ -67,6 +67,14 @@ namespace Bottleships
             if(ScrollingXPos <= -200) ScrollingXPos = this.pictureBox1.Width;
             ScrollingXPos -= 2;
 
+            if(this.OverrideMessage == "Playing Remote Game" && !(this.Client?.IsGameRunning ?? true))
+            {
+                this.OverrideMessage = null;
+                this.Client?.EndGame(); // last ditch in case we've not shut things down properly
+                this.Server?.StopListening();                
+            }
+
+
             if (this.CurrentGame != null)
             {
                 
@@ -549,8 +557,7 @@ namespace Bottleships
                             var server = "http://localhost:5999"; // the server name should be editable
                             RemoteCommander.RegisterCaptain(server);
                             this.Client = new Client(server);
-                            this.Client.OnStatusUpdate += Client_OnStatusUpdate;
-                            this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem
+                            this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem                            
 
                             this.OverrideMessage = "Playing Remote Game";
                             this.RefreshScreen();
@@ -570,11 +577,6 @@ namespace Bottleships
                     }
                 }
             }
-        }
-
-        private void Client_OnStatusUpdate(object sender, ClientUpdateEventArgs e)
-        {
-            
         }
 
         protected override void OnClosing(CancelEventArgs e)
