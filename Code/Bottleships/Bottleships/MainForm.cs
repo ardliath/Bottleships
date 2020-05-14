@@ -188,41 +188,51 @@ namespace Bottleships
 
         private void DrawMainMenu()
         {
-            DrawMenu("Test Bot Locally",
-                     "Connect Bot To Server",
-                    "Host Server",
-                    "Exit");
+            var bitmap = new Bitmap(this.pictureBox1.Width, this.pictureBox1.Height);
+            using (var gfx = Graphics.FromImage(bitmap))
+            {
 
+                DrawMenu(gfx,
+                        bitmap,
+                        true,
+                        "Test Bot Locally",
+                         "Connect Bot To Server",
+                        "Host Server",
+                        "Exit");
+            }
+
+            UpdateScreen(bitmap);
         }
 
-        private void DrawMenu(params string[] menuItems)
+        private void DrawMenu(Graphics gfx, Bitmap bitmap, bool alignTop, params string[] menuItems)
         {
             if (Timer.Interval != 25)
             {
                 this.Timer.Interval = 25;
             }
-            var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
 
-            using (Graphics gfx = Graphics.FromImage(bitmap))
+
+            if (BackgroundImage == null)
             {
-                if (BackgroundImage == null)
-                {
-                    BackgroundImage = ShipPainter.GetBitmapResource("Menu");
-                }
-
-                var distanceFromTheTop = 275;
-                gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
-
-                for (int i = 0; i < menuItems.Count(); i++)
-                {
-                    gfx.DrawString(menuItems.ElementAt(i),
-                        new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold),
-                        SelectedMenuIndex == i && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black,
-                        new PointF(10, distanceFromTheTop + (i * 55)));
-                }
+                BackgroundImage = ShipPainter.GetBitmapResource("Menu");
             }
 
-            UpdateScreen(bitmap);
+            var distanceFromTheTop = 275;
+            var distanceFromTheBottom = 50;
+            var spacing = 55;
+            gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
+
+            for (int i = 0; i < menuItems.Count(); i++)
+            {
+                int yPosition = alignTop
+                    ? distanceFromTheTop + (i * spacing)
+                    : this.pictureBox1.Height - distanceFromTheBottom - (spacing * menuItems.Count()) + (i * spacing);
+
+                gfx.DrawString(menuItems.ElementAt(i),
+                    new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold),
+                    SelectedMenuIndex == i && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black,
+                    new PointF(10, yPosition));
+            }
         }
 
         private void DrawOverrideMessageScreen()
@@ -230,10 +240,12 @@ namespace Bottleships
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
+                DrawMenu(gfx, bitmap, true);
+
                 StringFormat format = new StringFormat();
                 format.LineAlignment = StringAlignment.Center;
                 format.Alignment = StringAlignment.Center;
-                gfx.DrawString(this.OverrideMessage, new Font(FontFamily.GenericMonospace, 22), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height), format);
+                gfx.DrawString(this.OverrideMessage, new Font(FontFamily.GenericMonospace, 48, FontStyle.Bold), Brushes.Black, new RectangleF(0, 0, this.pictureBox1.Width, this.pictureBox1.Height), format);
             }
 
             UpdateScreen(bitmap);
@@ -242,24 +254,24 @@ namespace Bottleships
         private void DrawServerScreen()
         {
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
+            var spaceForHeader = 275;
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
-                gfx.DrawString("Bottleships Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 10));
+                DrawMenu(gfx, bitmap, false, "Start Game", "Close Server");
+                var brush = Brushes.Black;
+                var font = new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold);
+                gfx.DrawString("Configuring Server", font, brush, new PointF(10, spaceForHeader + 10));
 
                 var listenText = $"Server listening on http://{Environment.MachineName}:5999{"".PadRight(3 - Math.Abs(ScrollingXPos / 10) % 3, '.')}";
-                gfx.DrawString(listenText, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 75));
+                gfx.DrawString(listenText, font, brush, new PointF(10, spaceForHeader + 75));
 
-                gfx.DrawString("Connected Players:", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 110));
+                gfx.DrawString("Connected Players:", font, brush, new PointF(10, spaceForHeader + 110));
                 int i = 1;
                 foreach(var player in this.Server.ConnectedPlayers)
                 {
-                    gfx.DrawString(player.Name, new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(15, 110 + (35 * i)));
+                    gfx.DrawString(player.Name, font, brush, new PointF(15, spaceForHeader + 110 + (55 * i)));
                     i++;
                 }
-
-
-                gfx.DrawString("Start Game", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, this.pictureBox1.Height - 75));
-                gfx.DrawString("Close Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, this.pictureBox1.Height - 45));
             }            
 
             UpdateScreen(bitmap);
