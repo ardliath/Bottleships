@@ -61,7 +61,7 @@ namespace Bottleships
             this.Timer.Interval = 25;
             this.Timer.Start();
             
-            this.DrawMenu();
+            this.DrawMainMenu();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -140,7 +140,7 @@ namespace Bottleships
                 return;
             }
 
-            this.DrawMenu();
+            this.DrawMainMenu();
         }
 
         private void StartNextGame()
@@ -186,26 +186,40 @@ namespace Bottleships
             }
         }
 
-        private void DrawMenu()
+        private void DrawMainMenu()
         {
-            if(Timer.Interval != 25)
+            DrawMenu("Test Bot Locally",
+                     "Connect Bot To Server",
+                    "Host Server",
+                    "Exit");
+
+        }
+
+        private void DrawMenu(params string[] menuItems)
+        {
+            if (Timer.Interval != 25)
             {
                 this.Timer.Interval = 25;
             }
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
+
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
-                if(BackgroundImage == null)
+                if (BackgroundImage == null)
                 {
                     BackgroundImage = ShipPainter.GetBitmapResource("Menu");
                 }
 
+                var distanceFromTheTop = 275;
                 gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
 
-                gfx.DrawString("Test Bot Locally", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White: Brushes.Black, new PointF(10, 275));
-                gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 330));
-                gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 385));
-                gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 440));
+                for (int i = 0; i < menuItems.Count(); i++)
+                {
+                    gfx.DrawString(menuItems.ElementAt(i),
+                        new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold),
+                        SelectedMenuIndex == i && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black,
+                        new PointF(10, distanceFromTheTop + (i * 55)));
+                }
             }
 
             UpdateScreen(bitmap);
@@ -528,7 +542,7 @@ namespace Bottleships
                             this.Server.StopListening();
                             this.Server = null;
                             this.SelectedMenuIndex = 0;
-                            this.DrawMenu();
+                            this.DrawMainMenu();
                             break;
                     }
                 }
