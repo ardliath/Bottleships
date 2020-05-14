@@ -34,7 +34,9 @@ namespace Bottleships
 
         public int ScrollingXPos = 0;
 
-        public int SelectedMenuIndex = 0;        
+        public int SelectedMenuIndex = 0;      
+        
+        Bitmap MenuBackground { get; set; }
 
         public Game CurrentGame
         {
@@ -193,12 +195,17 @@ namespace Bottleships
             var bitmap = new Bitmap(this.pictureBox1.Width, pictureBox1.Height);
             using (Graphics gfx = Graphics.FromImage(bitmap))
             {
-                gfx.DrawString("Bottleships", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), Brushes.Black, new PointF(10, 10));
+                if(BackgroundImage == null)
+                {
+                    BackgroundImage = ShipPainter.GetBitmapResource("Menu");
+                }
 
-                gfx.DrawString("Test Bot Locally", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White: Brushes.Black, new PointF(10, 75));
-                gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 110));
-                gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 145));
-                gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 24, FontStyle.Regular), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 180));
+                gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
+
+                gfx.DrawString("Test Bot Locally", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 0 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White: Brushes.Black, new PointF(10, 275));
+                gfx.DrawString("Connect Bot To Server", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 1 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 330));
+                gfx.DrawString("Host Server", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 2 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 385));
+                gfx.DrawString("Exit", new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold), SelectedMenuIndex == 3 && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black, new PointF(10, 440));
             }
 
             UpdateScreen(bitmap);
