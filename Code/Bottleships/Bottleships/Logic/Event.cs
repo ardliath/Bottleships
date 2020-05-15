@@ -102,14 +102,22 @@ namespace Bottleships.Logic
             return games;
         }
 
-        public static Event CreateLocalGame()
+        public static Event CreateLocalGame(IEnumerable<ICaptain> opponents)
         {
-            var player1 = new Player(new LocalCommander(new MyCaptain()));
-            var player2 = new Player(new LocalCommander(new SimpleCaptain()));
-            var player3 = new Player(new LocalCommander(new Nelson()));
-            var player4 = new Player(new LocalCommander(new RandomCaptain()));
-            var player5 = new Player(new LocalCommander(new RandomCaptain()));
-            var player6 = new Player(new LocalCommander(new RandomCaptain()));
+            var allPlayers = new List<Player>();
+            var games = new List<Game>();
+            var humanPlayer = new Player(new LocalCommander(new MyCaptain()));
+            allPlayers.Add(humanPlayer);
+            
+
+            foreach(var opponent in opponents)
+            {
+                var player = new Player(new LocalCommander(opponent));
+                allPlayers.Add(player);
+                games.Add(new Game(humanPlayer, player));
+            }
+            games.Add(new Game(allPlayers.ToArray()));
+
 
             return new Event
             {
@@ -117,16 +125,7 @@ namespace Bottleships.Logic
                 {
                     new Round(Clazz.AllClasses.ToArray())
                     {
-                        Games = new Game[]
-                        {
-                            new Game(player1, player3),
-                            new Game(player1, player2, player3, player4, player5, player6),
-                            new Game(player1, player2, player3, player4, player6),
-                            new Game(player1, player2),
-
-                            new Game(player1, player2, player3),
-                            new Game(player1, player2, player3, player4),
-                        }
+                        Games = games.ToArray()
                     }
                 }
             };

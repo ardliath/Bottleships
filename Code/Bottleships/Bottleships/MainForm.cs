@@ -35,6 +35,8 @@ namespace Bottleships
         public int ScrollingXPos = 0;
 
         public int SelectedMenuIndex = 0;      
+
+        public List<ICaptain> LocalGameOpponents { get; set; }
         
         Bitmap MenuBackground { get; set; }
 
@@ -140,6 +142,12 @@ namespace Bottleships
                 return;
             }
 
+            if(this.LocalGameOpponents != null)
+            {
+                DrawSelectLocalOpponentMenu();
+                return;
+            }
+
             this.DrawMainMenu();
         }
 
@@ -198,13 +206,23 @@ namespace Bottleships
                         "Test Bot Locally",
                          "Connect Bot To Server",
                         "Host Server",
-                        "Exit");
+                        "Exit");                
             }
 
             UpdateScreen(bitmap);
         }
 
+        private void DrawMenu(Graphics gfx, Bitmap bitmap, bool alignTop, int[] selectedIndex, params string[] menuItems)
+        {
+            DrawMenu(gfx, bitmap, alignTop, true, 0, selectedIndex, menuItems);
+        }
+
         private void DrawMenu(Graphics gfx, Bitmap bitmap, bool alignTop, params string[] menuItems)
+        {
+            DrawMenu(gfx, bitmap, alignTop, true, 0, new int[] { }, menuItems);
+        }
+
+        private void DrawMenu(Graphics gfx, Bitmap bitmap, bool alignTop, bool drawBackground, int indexOffset, int[] selectedIndicies, params string[] menuItems)
         {
             if (Timer.Interval != 25)
             {
@@ -220,7 +238,11 @@ namespace Bottleships
             var distanceFromTheTop = 275;
             var distanceFromTheBottom = 50;
             var spacing = 55;
-            gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
+
+            if (drawBackground == true)
+            {
+                gfx.DrawImage(BackgroundImage, new Rectangle(0, 0, this.pictureBox1.Width, this.pictureBox1.Height));
+            }
 
             for (int i = 0; i < menuItems.Count(); i++)
             {
@@ -228,11 +250,52 @@ namespace Bottleships
                     ? distanceFromTheTop + (i * spacing)
                     : this.pictureBox1.Height - distanceFromTheBottom - (spacing * menuItems.Count()) + (i * spacing);
 
+                var selected = selectedIndicies.Contains(i + indexOffset);
+                var highlighted = SelectedMenuIndex == i + indexOffset && (ScrollingXPos / 10) % 2 == 0;
+                var brush = highlighted
+                    ? Brushes.White : selected
+                        ? Brushes.Green
+                        : Brushes.Black;
+
                 gfx.DrawString(menuItems.ElementAt(i),
                     new Font(FontFamily.GenericMonospace, 36, FontStyle.Bold),
-                    SelectedMenuIndex == i && (ScrollingXPos / 10) % 2 == 0 ? Brushes.White : Brushes.Black,
+                     brush,
                     new PointF(10, yPosition));
             }
+        }
+
+
+
+        private void DrawSelectLocalOpponentMenu()
+        {
+            var bitmap = new Bitmap(this.pictureBox1.Width, this.pictureBox1.Height);
+            using (var gfx = Graphics.FromImage(bitmap))
+            {
+
+                var selectedIndex = new List<int>();
+                if (this.LocalGameOpponents.OfType<RandomCaptain>().Any()) selectedIndex.Add(0);
+                if (this.LocalGameOpponents.OfType<SimpleCaptain>().Any()) selectedIndex.Add(1);
+                if (this.LocalGameOpponents.OfType<Nelson>().Any()) selectedIndex.Add(2);
+
+                DrawMenu(gfx,
+                        bitmap,
+                        true,
+                        selectedIndex.ToArray(),
+                        "Random",
+                        "Simple Captain",
+                        "Nelson");                
+
+                DrawMenu(gfx,
+                        bitmap,
+                        false,
+                        false,
+                        3,
+                        new int[] { },
+                        "Start Game",
+                        "Exit");
+            }
+
+            UpdateScreen(bitmap);
         }
 
         private void DrawOverrideMessageScreen()
@@ -571,43 +634,92 @@ namespace Bottleships
                 }
                 if (e.KeyData == Keys.Enter)
                 {
-                    switch (SelectedMenuIndex)
+                    if (LocalGameOpponents != null) // if we're selecting opponents
                     {
-                        case 0: // play locally
-                            this.Server = null;
+                        switch (SelectedMenuIndex)
+                        {
+                            case 0:
+                                AddRemoveClassFromLocalOpponents<RandomCaptain>();
+                                break;
 
-                            this.OverrideMessage = "Starting Local Game";
-                            this.DrawOverrideMessageScreen();
-                            this.OverrideMessage = null;
+                            case 1:
+                                AddRemoveClassFromLocalOpponents<SimpleCaptain>();
+                                break;
 
-                            this.Event = Event.CreateLocalGame();
-                            this.StartNextGame();
-                            this.Timer.Interval = TurnTickInterval;
-                            this.Timer.Start();
-                                                        
-                            break;
-                        case 1: // connect to server   
-                            var server = "http://localhost:5999"; // the server name should be editable
-                            RemoteCommander.RegisterCaptain(server);
-                            this.Client = new Client(server);
-                            this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem                            
+                            case 2:
+                                AddRemoveClassFromLocalOpponents<Nelson>();
+                                break;
 
-                            this.OverrideMessage = "Playing Remote Game";
-                            this.RefreshScreen();
+                            case 3:
+                                this.Server = null;
 
-                            break;
-                        case 2: // host server                            
-                            this.Server = new Server();
-                            this.SelectedMenuIndex = 0;
-                            this.Timer.Interval = 25;
-                            this.DrawServerScreen();
-                            break;
-                        default:
-                            this.Client?.EndGame(); // last ditch in case we've not shut things down properly
-                            this.Server?.StopListening();
-                            this.Close();                            
-                            break;
+                                this.OverrideMessage = "Starting Local Game";
+                                this.DrawOverrideMessageScreen();
+                                this.OverrideMessage = null;
+
+                                this.Event = Event.CreateLocalGame(this.LocalGameOpponents);
+                                this.StartNextGame();
+                                this.Timer.Interval = TurnTickInterval;
+                                this.Timer.Start();
+                                break;
+
+                            case 4:
+                                this.LocalGameOpponents = null;
+                                this.SelectedMenuIndex = 0;
+                                this.RefreshScreen();
+                                break;
+                        }
+
                     }
+                    else // otherwise it's the main menu
+                    {
+                        switch (SelectedMenuIndex)
+                        {
+                            case 0: // play locally
+
+                                this.LocalGameOpponents = new List<ICaptain>();
+                                this.RefreshScreen();
+                                break;
+                            case 1: // connect to server   
+                                var server = "http://localhost:5999"; // the server name should be editable
+                                RemoteCommander.RegisterCaptain(server);
+                                this.Client = new Client(server);
+                                this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem                            
+
+                                this.OverrideMessage = "Playing Remote Game";
+                                this.RefreshScreen();
+
+                                break;
+                            case 2: // host server                            
+                                this.Server = new Server();
+                                this.SelectedMenuIndex = 0;
+                                this.Timer.Interval = 25;
+                                this.DrawServerScreen();
+                                break;
+                            default:
+                                this.Client?.EndGame(); // last ditch in case we've not shut things down properly
+                                this.Server?.StopListening();
+                                this.Close();
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void AddRemoveClassFromLocalOpponents<T>() where T : ICaptain, new()
+        {
+            if (!this.LocalGameOpponents.OfType<T>().Any())
+            {
+                var item = new T();
+                this.LocalGameOpponents.Add(item);
+            }
+            else
+            {
+                var toRemove = this.LocalGameOpponents.OfType<T>().ToArray();
+                foreach (var item in toRemove)
+                {
+                    this.LocalGameOpponents.Remove(item);
                 }
             }
         }
