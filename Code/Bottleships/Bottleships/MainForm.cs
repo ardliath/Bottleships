@@ -681,13 +681,21 @@ namespace Bottleships
                                 this.RefreshScreen();
                                 break;
                             case 1: // connect to server   
-                                var server = "http://localhost:5999"; // the server name should be editable
-                                RemoteCommander.RegisterCaptain(server);
-                                this.Client = new Client(server);
-                                this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem                            
 
-                                this.OverrideMessage = "Playing Remote Game";
-                                this.RefreshScreen();
+                                try
+                                {
+                                    var server = "http://localhost:5999"; // the server name should be editable
+                                    RemoteCommander.RegisterCaptain(server);
+                                    this.Client = new Client(server);
+                                    this.Client.PlayGame();  // TODO: we need to disconnect the listener when the game ends or we'll have a problem                            
+
+                                    this.OverrideMessage = "Playing Remote Game";
+                                    this.RefreshScreen();
+                                }
+                                catch(Exception)
+                                {
+                                    MessageBox.Show("Unable to connect to remote server", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
 
                                 break;
                             case 2: // host server                            
