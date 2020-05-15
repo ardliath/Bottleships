@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\ExceptionalCaptain.cs" />
     <Compile Include="AI\Nelson.cs" />
     <Compile Include="AI\RandomCaptain.cs" />
     <Compile Include="AI\SimpleCaptain.cs" />
